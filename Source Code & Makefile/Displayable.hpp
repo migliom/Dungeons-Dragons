@@ -41,6 +41,13 @@ class Displayable{
         void setPosY(int y);
         void setWidth(int x);
         void setHeight(int y);
+        int getPosX();
+        int getPosY();
+        int getWidth();
+        int getHeight();
+        int getHP();
+        virtual void addX(int) {};
+        virtual void addY(int) {};
 };
 
 class Creature : public Displayable{

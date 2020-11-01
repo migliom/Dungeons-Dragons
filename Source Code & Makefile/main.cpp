@@ -7,6 +7,7 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include "DungeonXMLHandler.hpp"
+#include "Rogue.hpp"
 #include <exception>
 
 
@@ -41,12 +42,9 @@ int main(int argc, char* argv[]) {
         XMLCh * fileNameXMLEnc = xercesc::XMLString::transcode(fileName.c_str()); //Encode string as UTF-16, but transcode needs casting as const char * (not std::string)
         parser->parse(fileNameXMLEnc);
         xercesc::XMLString::release(&fileNameXMLEnc);
-        /*std::vector<Student> students = handler->getStudents();
-        for (Student student : students) {
-            std::cout << student.toString() << std::endl;
-            student.freeActivities();
+        Dungeon *dungeon = handler->getDungeon();
 
-        }*/
+        displayDungeon(dungeon);
 		delete parser;
 		delete handler;
         /*

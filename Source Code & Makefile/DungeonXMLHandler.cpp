@@ -15,6 +15,10 @@ inline std::string boolToString(bool booleanValue){
 DungeonXMLHandler::DungeonXMLHandler() {
 }
 
+Dungeon* DungeonXMLHandler::getDungeon(){
+    return dungeonBeingParsed;
+}
+
 std::string xmlChToString(const XMLCh* xmlChName, int length = -1){
     //Xerces Parses file into XMLCh* string. So use Transcode to allocate a char* buffer
     char * chStarName = xercesc::XMLString::transcode(xmlChName); 
@@ -42,8 +46,8 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
     if (DEBUG > 1) {
         std::cout << CLASSID << ".startElement qName: " << qNameStr << std::endl;
     }
-    if (case_insensitive_match(qNameStr,"Rooms")) {
-        std::cout << "Rooms: " << std::endl;
+    if (case_insensitive_match(qNameStr,"Rooms") || case_insensitive_match(qNameStr,"Passages")) {
+        //std::cout << "Rooms: " << std::endl;
     }
     else if (case_insensitive_match(qNameStr,"Dungeon")) {
 		std::string dungeonName = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
@@ -56,7 +60,9 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         std::string dungeonBHeight = xmlChToString(getXMLChAttributeFromString(attributes,"bottomHeight"));
         int dungeonBHeightI = std::stoi(dungeonBHeight);
 
-        Dungeon dungeon = Dungeon(dungeonName, dungeonWidthI, dungeonTHeightI, dungeonGameHeightI, dungeonBHeightI);
+        Dungeon *dungeon = new Dungeon(dungeonName, dungeonWidthI, dungeonTHeightI, dungeonGameHeightI, dungeonBHeightI);
+        dungeonBeingParsed = dungeon;
+    
     } else if (case_insensitive_match(qNameStr,"Room")) {
         int roomNum = std::stoi(xmlChToString(getXMLChAttributeFromString(attributes,"room")));
         bRoom = true;
@@ -68,8 +74,25 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
 
         Displayable *structure1 = new Room("newRoom");
         structure1->setID(roomNum, 2);
-        //dungeon.addRoom(((Room *)structure1));
+        dungeonBeingParsed->addRoom(dynamic_cast<Room*>(structure1));
         displayableBeingParsed = structure1;
+
+    }else if (case_insensitive_match(qNameStr,"Passage")) {
+        int roomNum1 = std::stoi(xmlChToString(getXMLChAttributeFromString(attributes,"room1")));
+        int roomNum2 = std::stoi(xmlChToString(getXMLChAttributeFromString(attributes,"room2")));
+        bPassage = true;
+        bRoom = false;
+        bPlayer = false;
+        bMonster = false;
+        bArmor = false;
+        bScroll = false;
+        bSword = false;
+
+        Displayable *structure2 = new Passage();
+        structure2->setID(1, 2);
+        dungeonBeingParsed->addPassage(dynamic_cast<Passage*>(structure2));
+        displayableBeingParsed = structure2;
+
     }else if (case_insensitive_match(qNameStr,"Player")) {
         std::string playerName = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
         std::string playerRoom = xmlChToString(getXMLChAttributeFromString(attributes,"room"));
@@ -86,9 +109,9 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
 
         creature1->setName("");
         creature1->setID(playerRoomI, playerSerialI); 
-        //roomBeingParsed->setCreature(((Player *) creature1)); 
         displayableBeingParsed = creature1;
-
+        dungeonBeingParsed->addCreature(dynamic_cast<Creature*>(creature1));
+        //Is this technically a downcast or an upcast? It is a displayable of type creature
     }else if (case_insensitive_match(qNameStr,"Monster")) {
         std::string monsterName = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
         std::string monsterRoom = xmlChToString(getXMLChAttributeFromString(attributes,"room"));
@@ -107,6 +130,7 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         creature2->setID(monsterRoomI, monsterSerialI);
         //roomBeingParsed->setCreature(((Monster *) creature2)); 
         displayableBeingParsed = creature2;
+        dungeonBeingParsed->addCreature(dynamic_cast<Creature*>(creature2));
 
     }else if (case_insensitive_match(qNameStr,"Scroll")) {
         std::string scrollName = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
@@ -123,6 +147,7 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         Displayable * item1 = new Scroll(scrollName); 
         item1->setID(scrollRoomI, scrollSerialI);
         //item1->setCreature(((Scroll *) item1)); 
+        dungeonBeingParsed->addItem(dynamic_cast<Item*>(item1));
         displayableBeingParsed = item1;
 
     }else if (case_insensitive_match(qNameStr,"Sword")) {
@@ -140,6 +165,7 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         Displayable * item2 = new Sword(swordName); 
         item2->setID(swordRoomI, swordSerialI);
         //item1->setCreature(((Scroll *) item1)); 
+        dungeonBeingParsed->addItem(dynamic_cast<Item*>(item2));
         displayableBeingParsed = item2;
 
     }else if (case_insensitive_match(qNameStr,"Armor")) {
@@ -158,23 +184,26 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         Displayable * item3 = new Scroll(armorName); 
         item3->setID(armorRoomI, armorSerialI);
         //item1->setCreature(((Scroll *) item1)); 
+        dungeonBeingParsed->addItem(dynamic_cast<Item*>(item3));
         displayableBeingParsed = item3;
     }else if (case_insensitive_match(qNameStr,"CreatureAction")) {
         std::string message = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
         std::string actionType = xmlChToString(getXMLChAttributeFromString(attributes,"type"));
         Action * action;
         if(case_insensitive_match(actionType,"death")){
-            action = new CreatureAction(); 
+            //action = new CreatureAction(); 
                 //creatureBeingParsed->setDeathAction(((Monster *) creature2)); 
                 //dungeon->roomBeingParsed->creatureBeingParsed = creature2;
                 
         }else if(case_insensitive_match(actionType,"hit")){
-            action = new CreatureAction(); 
+            std::cout << "Creature Action()" << std::endl;
+            //action = new CreatureAction(); 
                 //dungeon->roomBeingParsed->creatureBeingParsed->setHitAction(((Monster *) creature2)); 
                 //dungeon->roomBeingParsed->creatureBeingParsed = creature2;
 
         }else if(case_insensitive_match(actionType,"item")){
-            action = new ItemAction(); 
+            std::cout << "Item actions()" << std::endl;
+            //action = new ItemAction(); 
         }
     }
         
@@ -222,6 +251,21 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
                 bPosy = false;
             }
         }
+        if(bPassage){
+            Passage *passage = dynamic_cast<Passage*>(displayableBeingParsed);
+            if(bVisible){
+                passage->setVisible();
+                bVisible = false;
+            }
+            if(bPosx){
+                passage->addX(std::stoi(data));
+                bPosx = false;
+            }
+            if(bPosy){
+                passage->addY(std::stoi(data));
+                bPosy = false;
+            }
+        }
         if (bRoom) { //both structures and displayables can be visible
             //SEE IF WE NEED TO CAST IF IT  IS ONLY FILLING IN ATTRIBUTES OF BASE CLASS
             Room *room = (Room *) displayableBeingParsed;
@@ -258,7 +302,7 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
             }
             if(bHPMoves){
                 player->setHpMove((std::stoi(data)));
-                bRoom = false;
+                bHPMoves = false;
             }
         }
         //-----------------------------------------------------// 
@@ -302,7 +346,7 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
             }
         }
         else{
-            std::cout << "probably some sort of action" << "\n";
+            //std::cout << "probably some sort of action" << "\n";
         }
         //-----------------------------------------------------// 
         char *  qNameStr = xercesc::XMLString::transcode(qName);
@@ -318,7 +362,7 @@ void DungeonXMLHandler::characters(const XMLCh * const ch, const XMLSize_t lengt
         data = xmlChToString(ch,(int)length);
         if (DEBUG > 1) {
 			std::cout << CLASSID + ".characters: " << data << std::endl;
-            std::cout.flush();
+            //std::cout.flush();
         }
 }
 

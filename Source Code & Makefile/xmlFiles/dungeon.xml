@@ -24,7 +24,7 @@
                 <visible>1</visible>
                 <posX>2</posX>
                 <posY>2</posY>
-                <hp>99</hp>
+                <hp>69</hp>
                 <maxhit>1</maxhit>
                 <hpMoves>5</hpMoves>
                 <CreatureAction name="EndGame" type="death">

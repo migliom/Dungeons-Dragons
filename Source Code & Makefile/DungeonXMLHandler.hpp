@@ -4,7 +4,7 @@
 #include "Dungeon.hpp"
 #include "Action.hpp"
 #include "Displayable.hpp"
-#include "Dungeon.hpp"
+//#include "Dungeon.hpp"
 #include "Item.hpp"
 #include "ObjectDisplayGrid.hpp"
 #include "Structure.hpp"
@@ -16,6 +16,7 @@
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/sax2/Attributes.hpp>
+class Dungeon;
 
 class DungeonXMLHandler : public xercesc::DefaultHandler{
     private:
@@ -24,6 +25,8 @@ class DungeonXMLHandler : public xercesc::DefaultHandler{
         std::string data;
         int roomCount = 0;
         bool bRoom = false;
+        bool bPassage = false;
+        Dungeon *dungeonBeingParsed;
         Displayable *displayableBeingParsed;
         Action *actionBeingParsed;
         bool bVisible = false;
@@ -52,5 +55,6 @@ class DungeonXMLHandler : public xercesc::DefaultHandler{
         void fatalError(const xercesc::SAXParseException&);
         void characters(const XMLCh * const ch, const XMLSize_t length ) ;
         std::string toString();
+        Dungeon *getDungeon();
 };
 #endif
