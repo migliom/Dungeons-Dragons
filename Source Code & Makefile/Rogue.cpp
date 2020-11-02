@@ -14,6 +14,8 @@
 #include <atomic>
 #include <mutex>
 std::atomic_bool isRunning(true);
+int playerX = 0;
+int playerY = 0;
 static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
     char wall = 'x';
     char floor = '.';
@@ -137,8 +139,11 @@ void displayDungeon(Dungeon *dungeon){
     int playerHitpoints = 0;
     for(Creature* creature: creatures){ 
         Player *player = dynamic_cast<Player*>(creature);
-        if(player)
+        if(player){
             playerHitpoints=player->getHP();
+            playerX =player->getPosX();
+            playerY =(player->getPosY() + dungeon->getTopHeight());
+        }
     }
     //std::thread displayThread(initDisplay, grid, dimensions[0], dimensions[1], playerHitpoints);
     //displayThread.join();
@@ -152,6 +157,7 @@ void displayDungeon(Dungeon *dungeon){
 
     addCreaturesandItems(grid, dungeon);
     KeyboardListener listener(grid);
-    std::thread keyboardThread(&KeyboardListener::run, &listener);
-    keyboardThread.join();
+    //std::thread keyboardThread(&KeyboardListener::run, &listener, &playerX, &playerY);
+    //keyboardThread.join();
+    listener.run(&playerX, &playerY);
 }

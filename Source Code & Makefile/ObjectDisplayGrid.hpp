@@ -35,8 +35,6 @@ public:
 	 * Refreshes the grid display
 	 */
 	virtual void update();
-	virtual char returnVar(int, int);
-	void updateChar(int, int, char x);
 	/**
 	 * Adds an object to the display grid
 	 * @param ch  Object to display
@@ -52,5 +50,9 @@ public:
 	 * @param update  If true, immediately updates the screen
 	 */
 	virtual void writeLine(int line, std::string message);
+	virtual void moveUp(int*, int*);
+	virtual void moveLeft(int*, int*);
+	virtual void moveDown(int*, int*);
+	virtual void moveRight(int*, int*);
 };
 

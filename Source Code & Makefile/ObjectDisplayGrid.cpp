@@ -38,19 +38,7 @@ ObjectDisplayGrid::ObjectDisplayGrid(int _width, int _height, int _messages) : w
 	// clears the screen to start
 	clear();
 }
-void ObjectDisplayGrid::updateChar(int i, int j, char x){
-	if(objectGrid[i][j] != NULL)
-		objectGrid[i][j]->setChar(x);
-}
-char ObjectDisplayGrid::returnVar(int i, int j){
-	if(objectGrid[i][j] != NULL)
-		return objectGrid[i][j]->getChar();
-	else
-	{
-		return '7';
-	}
-	
-}
+
 ObjectDisplayGrid::~ObjectDisplayGrid() {
 	// free memory from the dynamically sized object grid
 	for (int i = 0; i < width; i++) {
@@ -107,4 +95,277 @@ void ObjectDisplayGrid::writeLine(int line, std::string message) {
 	mvaddstr(line, 0, message.c_str());
 	// clear after what we wrote to EOL
 	clrtoeol();
+}
+
+void ObjectDisplayGrid::moveUp(int *xP, int *yP){
+	int x = *xP;
+	int y = *yP;
+	if (objectGrid[x][y-1] != NULL) {
+		GridChar *chr1 = objectGrid[x][y-1];
+		char character1 = chr1->display;
+		if(character1 == 'x' || character1 == 'S'||  character1 == 'T' || character1 == 'H'){
+				return;
+		}
+		else{
+			*yP -= 1;
+			GridChar *checkX2;
+			char check;
+			GridChar* insert;
+			char insertChar;
+			if(character1 == '#'){
+				checkX2 = objectGrid[x][y+1]; //check what is behind your character
+				if(checkX2 == NULL){
+					//std::cout << "TEST" << std::endl;
+					addObjectToDisplay(new GridChar('#'), x, y);
+					addObjectToDisplay(new GridChar('@'), x, y-1); 
+					return;
+				}
+				check = checkX2->display;
+				if(check == '+'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check == '#'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x, y-1);
+				return;
+			}
+			else if(character1 == '+'){
+				checkX2 = objectGrid[x][y+1]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+					addObjectToDisplay(new GridChar('@'), x, y-1); 
+					return;
+				}
+				else{
+					check = checkX2->display;
+					if(check != '#'){
+						addObjectToDisplay(new GridChar('.'), x, y);
+					}
+					else if(check == '#'){
+						addObjectToDisplay(new GridChar('#'), x, y);
+					}
+				}
+					addObjectToDisplay(new GridChar('@'), x, y-1);
+					return;
+			}
+			else if(character1 == '.'){
+				checkX2 = objectGrid[x][y+1]; //check what is behind your character
+				check = checkX2->display;
+				if(check == '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('.'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x, y-1);
+				return;
+			}
+		}
+	}
+}
+void ObjectDisplayGrid::moveLeft(int *xP, int *yP){
+	int x = *xP;
+	int y = *yP;
+	if (objectGrid[x-1][y] != NULL) {
+		GridChar *chr1 = objectGrid[x-1][y];
+		char character1 = chr1->display;
+		if(character1 == 'x' || character1 == 'S'||  character1 == 'T' || character1 == 'H'){
+				return;
+		}
+		else{
+			*xP -= 1;
+			GridChar *checkX2;
+			char check;
+			GridChar* insert;
+			char insertChar;
+			if(character1 == '#'){
+				checkX2 = objectGrid[x+1][y]; //check what is behind your character
+				if(checkX2 == NULL){
+					//std::cout << "TEST" << std::endl;
+					addObjectToDisplay(new GridChar('#'), x, y);
+					addObjectToDisplay(new GridChar('@'), x-1, y); 
+					return;
+				}
+				check = checkX2->display;
+				if(check == '+'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check == '#'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x-1, y);
+				return;
+			}
+			else if(character1 == '+'){
+				checkX2 = objectGrid[x+1][y]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else{
+					check = checkX2->display;
+					if(check != '#'){
+						addObjectToDisplay(new GridChar('.'), x, y);
+					}
+					else if(check == '#'){
+						addObjectToDisplay(new GridChar('#'), x, y);
+					}
+				}
+					addObjectToDisplay(new GridChar('@'), x-1, y);
+					return;
+			}
+			else if(character1 == '.'){
+				checkX2 = objectGrid[x+1][y]; //check what is behind your character
+				check = checkX2->display;
+				if(check == '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('.'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x-1, y);
+				return;
+			}
+		}
+	}
+}
+void ObjectDisplayGrid::moveDown(int *xP, int *yP){
+	int x = *xP;
+	int y = *yP;
+	if (objectGrid[x][y+1] != NULL) {
+		GridChar *chr1 = objectGrid[x][y+1];
+		char character1 = chr1->display;
+		if(character1 == 'x' || character1 == 'S'||  character1 == 'T' || character1 == 'H'){
+				return;
+		}
+		else{
+			*yP += 1;
+			GridChar *checkX2;
+			char check;
+			GridChar* insert;
+			char insertChar;
+			if(character1 == '#'){
+				checkX2 = objectGrid[x][y-1]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+					addObjectToDisplay(new GridChar('@'), x, y+1); 
+					return;
+				}
+				check = checkX2->display;
+				if(check == '+'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check == '#'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x, y+1);
+				return;
+			}
+			else if(character1 == '+'){
+				checkX2 = objectGrid[x][y-1]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else{
+					check = checkX2->display;
+					if(check != '#'){
+						addObjectToDisplay(new GridChar('.'), x, y);
+					}
+					else if(check == '#'){
+						addObjectToDisplay(new GridChar('#'), x, y);
+					}
+				}
+					addObjectToDisplay(new GridChar('@'), x, y+1);
+					return;
+			}
+			else if(character1 == '.'){
+				checkX2 = objectGrid[x][y-1]; //check what is behind your character
+				check = checkX2->display;
+				if(check == '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('.'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x, y+1);
+				return;
+			}
+		}
+	}
+}
+void ObjectDisplayGrid::moveRight(int *xP, int *yP){
+	int x = *xP;
+	int y = *yP;
+	if (objectGrid[x+1][y] != NULL) {
+		GridChar *chr1 = objectGrid[x+1][y];
+		char character1 = chr1->display;
+		if(character1 == 'x' || character1 == 'S'||  character1 == 'T' || character1 == 'H'){
+				return;
+		}
+		else{
+			*xP += 1;
+			GridChar *checkX2;
+			char check;
+			GridChar* insert;
+			char insertChar;
+			if(character1 == '#'){
+				checkX2 = objectGrid[x-1][y]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+					addObjectToDisplay(new GridChar('@'), x+1, y); 
+					return;
+				}
+				check = checkX2->display;
+				if(check == '+'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check == '#'){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x+1, y);
+				return;
+			}
+			else if(character1 == '+'){
+				checkX2 = objectGrid[x-1][y]; //check what is behind your character
+				if(checkX2 == NULL){
+					addObjectToDisplay(new GridChar('#'), x, y);
+				}
+				else{
+					check = checkX2->display;
+					if(check != '#'){
+						addObjectToDisplay(new GridChar('.'), x, y);
+					}
+					else if(check == '#'){
+						addObjectToDisplay(new GridChar('#'), x, y);
+					}
+				}
+					addObjectToDisplay(new GridChar('@'), x+1, y);
+					return;
+			}
+			else if(character1 == '.'){
+				checkX2 = objectGrid[x-1][y]; //check what is behind your character
+				check = checkX2->display;
+				if(check == '#'){
+					addObjectToDisplay(new GridChar('+'), x, y);
+				}
+				else if(check != '#'){
+					addObjectToDisplay(new GridChar('.'), x, y);
+				}
+				addObjectToDisplay(new GridChar('@'), x+1, y);
+				return;
+			}
+		}
+	}
 }
