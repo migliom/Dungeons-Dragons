@@ -17,7 +17,6 @@ ObjectDisplayGrid::ObjectDisplayGrid(int _width, int _height, int _messages) : w
 			objectGrid[i][j] = NULL;
 		}
 	}
-
 	// initialize ncurses
 
 	// set command window size if running on windows, useful when running in Visual Studio
@@ -39,7 +38,19 @@ ObjectDisplayGrid::ObjectDisplayGrid(int _width, int _height, int _messages) : w
 	// clears the screen to start
 	clear();
 }
-
+void ObjectDisplayGrid::updateChar(int i, int j, char x){
+	if(objectGrid[i][j] != NULL)
+		objectGrid[i][j]->setChar(x);
+}
+char ObjectDisplayGrid::returnVar(int i, int j){
+	if(objectGrid[i][j] != NULL)
+		return objectGrid[i][j]->getChar();
+	else
+	{
+		return '7';
+	}
+	
+}
 ObjectDisplayGrid::~ObjectDisplayGrid() {
 	// free memory from the dynamically sized object grid
 	for (int i = 0; i < width; i++) {
@@ -61,11 +72,19 @@ ObjectDisplayGrid::~ObjectDisplayGrid() {
 void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 	// note grid objects start from 0,0 and go until width,height
 	// x between 0 and width
+	//m.lock();
 	if ((0 <= x) && (x < width)) {
 		// y between 0 and height
 		if ((0 <= y) && (y < height)) {
 			// delete existing character if present
 			if (objectGrid[x][y] != NULL) {
+				GridChar *chr = objectGrid[x][y];
+				char character = chr->display;
+				if(character == 'x'){
+					delete ch;
+					character = '+';
+					GridChar* ch = new GridChar(character);
+				}
 				delete objectGrid[x][y];
 			}
 
@@ -75,6 +94,7 @@ void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 			mvaddch(y, x, ch->getChar());
 		}
 	}
+	//m.unlock();
 }
 
 void ObjectDisplayGrid::update() {

@@ -1,4 +1,6 @@
 #include "DungeonXMLHandler.hpp"
+int currRoomX = 0;
+int currRoomY = 0;
 int case_insensitive_match(std::string s1, std::string s2) {
     //convert s1 and s2 into lower case strings
     std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower); //std overloads tolower, ::tolower is the definition in the global namespace
@@ -237,17 +239,17 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
 }
 
 void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, const XMLCh* qName)  {
-        if(bRoom || bMonster || bPlayer || bArmor || bSword || bScroll){
+        if(bMonster || bPlayer || bArmor || bSword || bScroll){
             if(bVisible){
                 displayableBeingParsed->setVisible();
                 bVisible = false;
             }
             else if(bPosx){
-                displayableBeingParsed->setPosX(std::stoi(data));
+                displayableBeingParsed->setPosX(std::stoi(data)+currRoomX);
                 bPosx = false;
             }
             else if(bPosy){
-                displayableBeingParsed->setPosY(std::stoi(data));
+                displayableBeingParsed->setPosY(std::stoi(data)+currRoomY);
                 bPosy = false;
             }
         }
@@ -268,6 +270,20 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
         }
         if (bRoom) { //both structures and displayables can be visible
             //SEE IF WE NEED TO CAST IF IT  IS ONLY FILLING IN ATTRIBUTES OF BASE CLASS
+            if(bVisible){
+                displayableBeingParsed->setVisible();
+                bVisible = false;
+            }
+            else if(bPosx){
+                displayableBeingParsed->setPosX(std::stoi(data));
+                currRoomX = std::stoi(data);
+                bPosx = false;
+            }
+            else if(bPosy){
+                displayableBeingParsed->setPosY(std::stoi(data));
+                currRoomY = std::stoi(data);
+                bPosy = false;
+            }
             Room *room = (Room *) displayableBeingParsed;
             if(bWidth){
                 room->setWidth(std::stoi(data));

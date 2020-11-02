@@ -12,6 +12,7 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+#include <mutex>
 std::atomic_bool isRunning(true);
 static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
     char wall = 'x';
@@ -29,7 +30,7 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
                 else
                     grid->addObjectToDisplay(new GridChar(floor), i, j);   
                 for (int i = 0; (isRunning && i < 5); i++) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
             grid->update();
             } 
@@ -52,12 +53,19 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
         std::vector<int> y = passage->getY();
         for(int i = 0; i < x.size(); i++){
             if(x[i] == x[i+1]){
-                for(int j = y[i]; j <= y[i+1]; j++)
-                {
-                    grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
-                    grid->update();
+                if(y[i] < y[i+1]){
+                    for(int j = y[i]; j <= y[i+1]; j++)
+                    {
+                        grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
+                        grid->update();
+                    }
                 }
-                
+                else{
+                    for(int j = y[i]; j >= y[i+1]; j--){  
+                        grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
+                        grid->update();
+                    }
+                } 
             }
             else{
                 for(int k = x[i]; k <= x[i+1]; k++){
@@ -69,7 +77,53 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
         }
         grid->update();
     }
-    grid->update();
+}
+static void addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
+    int topH = dungeon->getTopHeight();
+    std::vector <Item*> items = dungeon->getItems();
+    std::vector <Creature*> creatures = dungeon->getCreatures();
+    for(Item *item: items){
+        int posX = item->getPosX();
+        int posY = item->getPosY();
+        //std::cout << "PosX: " << posX << " PosY: " << posY << std::endl;
+        char c = ' ';
+        Scroll *s = dynamic_cast<Scroll*>(item);
+        if(s)
+            c = ']';
+        Sword *sw = dynamic_cast<Sword*>(item);
+        if(sw)
+            c = ')';
+        Armor *a = dynamic_cast<Armor*>(item);
+        if(a)
+            c = ']';
+        grid->addObjectToDisplay(new GridChar(c), posX, posY+topH);
+        grid->update();
+        for(int i = 0; i < 5; i++)
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+
+     for(Creature *creature: creatures){
+        int posX = creature->getPosX();
+        int posY = creature->getPosY();
+        char ch = ' ';
+        Monster *m = dynamic_cast<Monster*>(creature);
+        if(m){
+            std::string name = m->getName();
+            if(name == "Hobgoblin")
+                ch = 'H';
+            else if(name == "Snake")
+                ch = 'S';
+            else if(name == "Troll")
+                ch = 'T';
+        }
+        Player *p = dynamic_cast<Player*>(creature);
+        if(p)
+            ch = '@';
+        grid->addObjectToDisplay(new GridChar(ch), posX, posY+topH);
+        grid->update();
+        for(int i = 0; i < 5; i++)
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
 }
 void displayDungeon(Dungeon *dungeon){
     std::vector<int> dimensions = dungeon->returnDimensions();
@@ -87,12 +141,17 @@ void displayDungeon(Dungeon *dungeon){
             playerHitpoints=player->getHP();
     }
     //std::thread displayThread(initDisplay, grid, dimensions[0], dimensions[1], playerHitpoints);
-    std::thread displayRooms(addRooms, dungeon, grid);
+    //displayThread.join();
+    initDisplay(grid, dimensions[0], dimensions[1], playerHitpoints);
+    //std::thread displayRooms(addRooms, dungeon, grid);
+    //displayRooms.join();
+    addRooms(dungeon, grid);
     //std::thread displayPassages(addPassages, grid, dungeon);
+    //displayPassages.join();
+    addPassages(grid, dungeon);
+
+    addCreaturesandItems(grid, dungeon);
     KeyboardListener listener(grid);
     std::thread keyboardThread(&KeyboardListener::run, &listener);
     keyboardThread.join();
-    displayRooms.join();
-    //displayPassages.join();
-    //displayThread.join();
 }

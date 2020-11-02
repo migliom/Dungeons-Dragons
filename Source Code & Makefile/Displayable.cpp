@@ -79,6 +79,10 @@ int Displayable::getHP(){
 Creature::Creature(){
 
 }
+
+int Creature::getSerial(){
+    return serial;
+}
 void Creature::setHP(int _HP){
     //std::cout << "setHP()" << std::endl;
     Displayable::setHp(_HP);
@@ -134,4 +138,7 @@ void Monster::setID(int _room, int _serial){
     //std::cout << "Monster: " << _room << ", Serial: " << _serial << std::endl;
 }
 
+std::string Monster::getName(){
+    return nameMonster;
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//

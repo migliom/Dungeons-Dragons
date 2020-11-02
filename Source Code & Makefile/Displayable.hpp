@@ -48,6 +48,7 @@ class Displayable{
         int getHP();
         virtual void addX(int) {};
         virtual void addY(int) {};
+        virtual int getSerial() {};
 };
 
 class Creature : public Displayable{
@@ -61,6 +62,7 @@ class Creature : public Displayable{
         virtual void setID(int, int) {};
         virtual void setName(std::string) {};
         void setSerial(int);
+        int getSerial();
         void setHP(int);
         void setHpMoves(int);
         void setDeathAction(CreatureAction);
@@ -87,5 +89,6 @@ class Monster : public Creature{
         Monster();
         void setName(std::string);
         void setID(int, int);
+        std::string getName();
 };
 #endif

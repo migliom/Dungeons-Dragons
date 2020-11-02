@@ -1,7 +1,13 @@
 #pragma once
 #include <string>
 #include "GridChar.hpp"
-
+#include <sstream>
+#include <iostream>
+#include <stdio.h>
+#include <vector>
+#include <thread>
+#include <atomic>
+#include <mutex>
 class ObjectDisplayGrid {
 private:
 	/** Keeps track of the characters on the screen */
@@ -21,7 +27,7 @@ public:
 	 * @param messages  Number of lines to reserve in the message area
 	 */
 	ObjectDisplayGrid(int width, int height, int messages);
-
+	static std::mutex m;
 	/** Object deconstructor, to delete the grid character matrix and free ncurses data */
 	~ObjectDisplayGrid();
 
@@ -29,7 +35,8 @@ public:
 	 * Refreshes the grid display
 	 */
 	virtual void update();
-
+	virtual char returnVar(int, int);
+	void updateChar(int, int, char x);
 	/**
 	 * Adds an object to the display grid
 	 * @param ch  Object to display

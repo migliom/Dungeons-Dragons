@@ -6,15 +6,16 @@
  */
 class GridChar {
 private:
-	char display;
+	//char display;
 
 public:
+	char display;
 	/**
 	 * Creates a new grid character
 	 * @param display Character to use for display
 	 */
 	GridChar(char display);
-
+	virtual void setChar(char x);
 	/**
 	 * Gets the character used to display this grid character
 	 * @return  Character to display

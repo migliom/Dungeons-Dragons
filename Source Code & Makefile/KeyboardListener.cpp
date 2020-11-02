@@ -1,7 +1,4 @@
 #include "KeyboardListener.hpp"
-#include <sstream>
-#include <iostream>
-#include <stdio.h>
 
 KeyboardListener::KeyboardListener(ObjectDisplayGrid* _grid) : grid(_grid) {}
 
@@ -22,6 +19,8 @@ void KeyboardListener::run() {
 			break;
 		case 'e':
 			grid->writeLine(2, "You found the easter egg, congrats");
+			break;
+		case 'a':
 			break;
 		default:
 			// C is not happy about appending a character to a string apparently
