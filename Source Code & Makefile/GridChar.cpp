@@ -1,7 +1,8 @@
 #include "GridChar.hpp"
 
-GridChar::GridChar(char _display){
+GridChar::GridChar(char _display, Displayable *dis){
 	floorStack.push(_display);
+	displayableStack.push(dis);
 }
 
 char GridChar::getChar() {

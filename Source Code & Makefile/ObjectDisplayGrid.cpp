@@ -72,7 +72,7 @@ void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 					if(ch->getChar() == '#'){
 						delete ch;
 						character = '+';
-						GridChar* ch = new GridChar(character);
+						GridChar* ch = new GridChar(character, NULL);
 						delete objectGrid[x][y];
 						objectGrid[x][y] = ch;
 						mvaddch(y, x, ch->getChar());
@@ -103,7 +103,7 @@ void ObjectDisplayGrid::writeLine(int line, std::string message) {
 	clrtoeol();
 }
 
-void ObjectDisplayGrid::moveUp(int *xP, int *yP){
+void ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
 	if (objectGrid[x][y-1] != NULL) {
@@ -112,16 +112,21 @@ void ObjectDisplayGrid::moveUp(int *xP, int *yP){
 		if(character1 == 'x'){
 				return;
 		}
+		/*else if(character1 == 'T' || character1 == 'S' || character1 == 'H'){
+			*yP -= 1;
+			//engageInCombat()
+		}*/
 		else{
 			*yP -= 1;
-			addObjectToDisplay(new GridChar('@'), x, y-1);
+			addObjectToDisplay(new GridChar('@', p), x, y-1);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
+			checkX2->displayableStack.pop();
 			mvaddch(y, x, checkX2->getChar());
 		}
 	}
 }
-void ObjectDisplayGrid::moveLeft(int *xP, int *yP){
+void ObjectDisplayGrid::moveLeft(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
 	if (objectGrid[x-1][y] != NULL) {
@@ -132,14 +137,15 @@ void ObjectDisplayGrid::moveLeft(int *xP, int *yP){
 		}
 		else{
 			*xP -= 1;
-			addObjectToDisplay(new GridChar('@'), x-1, y);
+			addObjectToDisplay(new GridChar('@', p), x-1, y);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
+			checkX2->displayableStack.pop();
 			mvaddch(y, x, checkX2->getChar());
 		}
 	}
 }
-void ObjectDisplayGrid::moveDown(int *xP, int *yP){
+void ObjectDisplayGrid::moveDown(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
 	if (objectGrid[x][y+1] != NULL) {
@@ -150,14 +156,15 @@ void ObjectDisplayGrid::moveDown(int *xP, int *yP){
 		}
 		else{
 			*yP += 1;
-			addObjectToDisplay(new GridChar('@'), x, y+1);
+			addObjectToDisplay(new GridChar('@', p), x, y+1);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
+			checkX2->displayableStack.pop();
 			mvaddch(y, x, checkX2->getChar());
 		}
 	}
 }
-void ObjectDisplayGrid::moveRight(int *xP, int *yP){
+void ObjectDisplayGrid::moveRight(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
 	if (objectGrid[x+1][y] != NULL) {
@@ -168,9 +175,10 @@ void ObjectDisplayGrid::moveRight(int *xP, int *yP){
 		}
 		else{
 			*xP += 1;
-			addObjectToDisplay(new GridChar('@'), x+1, y);
+			addObjectToDisplay(new GridChar('@', p), x+1, y);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
+			checkX2->displayableStack.pop();
 			mvaddch(y, x, checkX2->getChar());
 		}
 	}

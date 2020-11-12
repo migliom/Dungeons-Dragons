@@ -50,9 +50,9 @@ public:
 	 * @param update  If true, immediately updates the screen
 	 */
 	virtual void writeLine(int line, std::string message);
-	virtual void moveUp(int*, int*);
-	virtual void moveLeft(int*, int*);
-	virtual void moveDown(int*, int*);
-	virtual void moveRight(int*, int*);
+	virtual void moveUp(int*, int*, Player*);
+	virtual void moveLeft(int*, int*, Player*);
+	virtual void moveDown(int*, int*, Player*);
+	virtual void moveRight(int*, int*, Player*);
 };
 

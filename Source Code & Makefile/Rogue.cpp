@@ -28,9 +28,9 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
         for(int i = x; i < (room->getWidth()+x); i++){
             for(int j = y+topH; j < (room->getHeight()+y+topH); j++){
                 if((i == x || i == (room->getWidth()+x-1)) || (j == y+topH || j == (room->getHeight()+y-1+topH))) //|| i == (room->getWidth()) && j == y || j == room->getHeight())
-                    grid->addObjectToDisplay(new GridChar(wall), i, j);
+                    grid->addObjectToDisplay(new GridChar(wall, NULL), i, j);
                 else
-                    grid->addObjectToDisplay(new GridChar(floor), i, j);   
+                    grid->addObjectToDisplay(new GridChar(floor, NULL), i, j);   
                 for (int i = 0; (isRunning && i < 5); i++) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
@@ -65,20 +65,20 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
                 if(y[i] < y[i+1]){
                     for(int j = y[i]; j <= y[i+1]; j++)
                     {
-                        grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
+                        grid->addObjectToDisplay(new GridChar('#', NULL), x[i], (j+topH));
                         //rid->update();
                     }
                 }
                 else{
                     for(int j = y[i]; j >= y[i+1]; j--){  
-                        grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
+                        grid->addObjectToDisplay(new GridChar('#', NULL), x[i], (j+topH));
                         //grid->update();
                     }
                 } 
             }
             else if(y[i] == y[i+1]){
                 for(int k = x[i]; k <= x[i+1]; k++){
-                    grid->addObjectToDisplay(new GridChar('#'), k, (y[i]+topH));
+                    grid->addObjectToDisplay(new GridChar('#', NULL), k, (y[i]+topH));
                     //grid->update();
                 }
             }
@@ -86,7 +86,8 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
         grid->update();
     }
 }
-static void addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
+static Player* addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
+    Player *player;
     int topH = dungeon->getTopHeight();
     std::vector <Item*> items = dungeon->getItems();
     std::vector <Creature*> creatures = dungeon->getCreatures();
@@ -97,15 +98,23 @@ static void addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
         //std::cout << "PosX: " << posX << " PosY: " << posY << std::endl;
         char c = ' ';
         Scroll *s = dynamic_cast<Scroll*>(item);
-        if(s)
+        if(s){
             c = '?';
+            grid->addObjectToDisplay(new GridChar(c, s), posX, posY+topH);
+            continue;
+        }
         Sword *sw = dynamic_cast<Sword*>(item);
-        if(sw)
+        if(sw){
             c = ')';
+            grid->addObjectToDisplay(new GridChar(c, sw), posX, posY+topH);
+            continue;
+        }
         Armor *a = dynamic_cast<Armor*>(item);
-        if(a)
+        if(a){
             c = ']';
-        grid->addObjectToDisplay(new GridChar(c), posX, posY+topH);
+            grid->addObjectToDisplay(new GridChar(c, a), posX, posY+topH);
+        }
+        //grid->addObjectToDisplay(new GridChar(c, NULL), posX, posY+topH);
         grid->update();
         for(int i = 0; i < 5; i++)
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -124,15 +133,19 @@ static void addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
                 ch = 'S';
             else if(name == "Troll")
                 ch = 'T';
+            grid->addObjectToDisplay(new GridChar(ch, m), posX, posY+topH);
+            continue;
         }
         Player *p = dynamic_cast<Player*>(creature);
+        player = p;
         if(p)
             ch = '@';
-        grid->addObjectToDisplay(new GridChar(ch), posX, posY+topH);
+        grid->addObjectToDisplay(new GridChar(ch, p), posX, posY+topH);
         grid->update();
         for(int i = 0; i < 5; i++)
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
+    return player;
 }
 void displayDungeon(Dungeon *dungeon){
     std::vector<int> dimensions = dungeon->returnDimensions();
@@ -161,10 +174,9 @@ void displayDungeon(Dungeon *dungeon){
     //std::thread displayPassages(addPassages, grid, dungeon);
     //displayPassages.join();
     addPassages(grid, dungeon);
-
-    addCreaturesandItems(grid, dungeon);
+    Player *p = addCreaturesandItems(grid, dungeon);
     KeyboardListener listener(grid);
     //std::thread keyboardThread(&KeyboardListener::run, &listener, &playerX, &playerY);
     //keyboardThread.join();
-    listener.run(&playerX, &playerY);
+    listener.run(&playerX, &playerY, p);
 }

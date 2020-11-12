@@ -19,6 +19,6 @@ public:
     /**
      * Runs the keyboard listener in a thread
      */
-    void run(int*, int*);
+    void run(int*, int*, Player*);
 };
 
