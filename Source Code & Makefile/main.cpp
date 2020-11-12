@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
         xercesc::XMLString::release(&fileNameXMLEnc);
         Dungeon *dungeon = handler->getDungeon();
 
-        /*std::vector<Creature*> creatures = dungeon->getCreatures();
-        std::cout << "Size of creatures: " << creatures.size() << std::endl;
+        //std::vector<CreatureAction*> creatures = dungeon->getCreatures();
+        /*std::cout << "Size of creatures: " << creatures.size() << std::endl;
         for(Creature *creature: creatures){
             int x = creature->getPosX();
             int y = creature->getPosX();

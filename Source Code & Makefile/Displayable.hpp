@@ -80,6 +80,7 @@ class Creature : public Displayable{
         void setHpMoves(int);
         void setDeathAction(CreatureAction);
         void setHitAction(CreatureAction);
+        std::vector <CreatureAction*> getCreatureActions();
 };
 
 class Player : public Creature{

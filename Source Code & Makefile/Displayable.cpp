@@ -82,6 +82,11 @@ Creature::Creature(){
 void Creature::addCreatureAction(CreatureAction *cA){
     creatureActions.push_back(cA);
 }
+std::vector <CreatureAction*> Creature::getCreatureActions(){
+    int size = creatureActions.size();
+    std::cout << "Please print the size: " << size << std::endl;
+    return creatureActions;
+}
 int Creature::getSerial(){
     return serial;
 }

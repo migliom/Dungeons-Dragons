@@ -9,7 +9,7 @@ static int damageCalc(int damage){
     srand (time(NULL));
     return (rand() % damage + 1);
 }
-char ObjectDisplayGrid::engageInCombat(Player *p, Displayable *dp, int xP, int yP){
+char ObjectDisplayGrid::engageInCombat(Player *p, Creature *dp, int xP, int yP){
     int monsterHP = dp->hitpoints;
     int playerHP = p->hitpoints;
     int pmaxHit = p->maxHP;
@@ -21,13 +21,13 @@ char ObjectDisplayGrid::engageInCombat(Player *p, Displayable *dp, int xP, int y
 		playerHP -= monsterDamage;
         monsterHP -= pDamage;
 		//std::cout << "BOOSSSMANN" <<std::endl;
-        writeLine(yP+15, "You did " + std::to_string(pDamage) + " to the monster.");
-		writeLine(yP+16, "You have " + std::to_string(playerHP) + " remaining.");
-        writeLine(yP+17, "The monster did " + std::to_string(monsterDamage) + " to you.");
-		writeLine(yP+16, "Monster has " + std::to_string(monsterHP) + " remaining.");
+        writeLine(yP+34, "You did " + std::to_string(pDamage) + " damage to the monster.");
+		writeLine(yP+35, "You have " + std::to_string(playerHP) + " hitpoints remaining.");
+        writeLine(yP+36, "The monster did " + std::to_string(monsterDamage) + "damage to you.");
+		writeLine(yP+37, "Monster has " + std::to_string(monsterHP) + "hitpoints remaining.");
         usleep(30000);
     }
-    if(playerHP){
+    if(playerHP > 0){
         //execute monster death message
         p->hitpoints = playerHP;
 		return 'W';
@@ -106,15 +106,20 @@ void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 					if(ch->getChar() == '#'){
 						delete ch;
 						character = '+';
-						GridChar* ch = new GridChar(character, NULL);
+						GridChar* ch = new GridChar(character, NULL, NULL);
 						delete objectGrid[x][y];
 						objectGrid[x][y] = ch;
 						mvaddch(y, x, ch->getChar());
 						return;
 					}
 				}
+				/*if(ch->getChar() < 65 || ch->getChar() > 90){
+					objectGrid[x][y]->itemStack.push((ch->getItem())); //item
+				}*/
+				else{
+					objectGrid[x][y]->displayableStack.push((ch->getDis()));
+				}
 				objectGrid[x][y]->floorStack.push((ch->getChar()));
-				objectGrid[x][y]->displayableStack.push((ch->getDis()));
 			}
 			// add new character to the internal character list
 			else
@@ -138,22 +143,22 @@ void ObjectDisplayGrid::writeLine(int line, std::string message) {
 	clrtoeol();
 }
 
-void ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
+int ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
 	if (objectGrid[x][y-1] != NULL) {
 		GridChar *chr1 = objectGrid[x][y-1];
 		char character1 = chr1->getChar();
 		if(character1 == 'x'){
-				return;
+				return 1;
 		}
 		else if(character1 == 'T' || character1 == 'S' || character1 == 'H'){
 			*yP -= 1;
-			Displayable *monster = objectGrid[x][*yP]->getDis();
+			Creature *monster = objectGrid[x][*yP]->getDis();
 			if(monster == NULL){
 				std::cout << "This joint is null" <<std::endl;
 			}
-			addObjectToDisplay(new GridChar('@', p), x, y-1);
+			addObjectToDisplay(new GridChar('@', p, NULL), x, y-1);
 			char win_lose = engageInCombat(p, monster, *xP, *yP);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
@@ -165,28 +170,27 @@ void ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 				checkX2->displayableStack.pop();
 				checkX2->floorStack.pop();
 				checkX2->displayableStack.pop();
-				addObjectToDisplay(new GridChar('@', p), x, y-1);
+				addObjectToDisplay(new GridChar('@', p, NULL), x, y-1);
 				mvaddch(y-1, x, checkX2->getChar());
-				//need to add return statement that you died and the game is over
+				return 1;
 			}
-			/*else{
-				GridChar *checkX2 = objectGrid[x][y];
-				checkX2->floorStack.pop();
-				checkX2->displayableStack.pop();
-				mvaddch(y+1, x, checkX2->getChar());
-			}*/
+			else{
+				return 0;
+			}
 		}
-		/*else if(character1 == '?' || character1 == ')' || character1 == ']'){
+		else if(character1 == '?' || character1 == ')' || character1 == ']'){
 			*yP -= 1;
-			figureOutItem(this, p, xP, yP-1);
-		}*/
+			Displayable *item = objectGrid[x][*yP]->getDis();
+			//figureOutItem(p, *xP, y-1);
+		}
 		else{
 			*yP -= 1;
-			addObjectToDisplay(new GridChar('@', p), x, y-1);
+			addObjectToDisplay(new GridChar('@', p, NULL), x, y-1);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
 			checkX2->displayableStack.pop();
 			mvaddch(y, x, checkX2->getChar());
+			return 1;
 		}
 	}
 }
@@ -201,7 +205,7 @@ void ObjectDisplayGrid::moveLeft(int *xP, int *yP, Player *p){
 		}
 		else{
 			*xP -= 1;
-			addObjectToDisplay(new GridChar('@', p), x-1, y);
+			addObjectToDisplay(new GridChar('@', p, NULL), x-1, y);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
 			checkX2->displayableStack.pop();
@@ -220,7 +224,7 @@ void ObjectDisplayGrid::moveDown(int *xP, int *yP, Player *p){
 		}
 		else{
 			*yP += 1;
-			addObjectToDisplay(new GridChar('@', p), x, y+1);
+			addObjectToDisplay(new GridChar('@', p, NULL), x, y+1);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
 			checkX2->displayableStack.pop();
@@ -239,7 +243,7 @@ void ObjectDisplayGrid::moveRight(int *xP, int *yP, Player *p){
 		}
 		else{
 			*xP += 1;
-			addObjectToDisplay(new GridChar('@', p), x+1, y);
+			addObjectToDisplay(new GridChar('@', p, NULL), x+1, y);
 			GridChar *checkX2 = objectGrid[x][y];
 			checkX2->floorStack.pop();
 			checkX2->displayableStack.pop();

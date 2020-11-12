@@ -47,6 +47,7 @@ class DungeonXMLHandler : public xercesc::DefaultHandler{
         bool bActionMessage = false;
         bool bActionIntValue = false;
         bool bActionCharValue = false;
+        bool bItemIntValue = false;
         
     public:
         //std::vector<Room*>getRooms();

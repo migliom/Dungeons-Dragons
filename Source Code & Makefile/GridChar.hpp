@@ -13,19 +13,22 @@ private:
 public:
 	//char display;
 	std::stack <char> floorStack;
-	std::stack <Displayable*> displayableStack;
-	Displayable *dis;
+	std::stack <Creature*> displayableStack;
+	std::stack <Item*> itemStack;
+	Creature *dis;
+	Item *item;
 	/**
 	 * Creates a new grid character
 	 * @param display Character to use for display
 	 */
-	GridChar(char, Displayable*);
+	GridChar(char, Creature*, Item *);
 	virtual void setChar(char x);
 	/**
 	 * Gets the character used to display this grid character
 	 * @return  Character to display
 	 */
 	virtual char getChar();
-	virtual Displayable* getDis();
+	virtual Creature* getDis();
+	virtual Item* getItem();
 };
 

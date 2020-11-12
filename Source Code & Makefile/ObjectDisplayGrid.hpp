@@ -52,11 +52,11 @@ public:
 	 * @param update  If true, immediately updates the screen
 	 */
 	virtual void writeLine(int line, std::string message);
-	virtual void moveUp(int*, int*, Player*);
+	virtual int moveUp(int*, int*, Player*);
 	virtual void moveLeft(int*, int*, Player*);
 	virtual void moveDown(int*, int*, Player*);
 	virtual void moveRight(int*, int*, Player*);
-	char engageInCombat(Player*, Displayable*, int, int);
+	char engageInCombat(Player*, Creature*, int, int);
 	void figureOutItem(Player*, int, int);
 };
 

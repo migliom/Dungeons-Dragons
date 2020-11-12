@@ -28,9 +28,9 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
         for(int i = x; i < (room->getWidth()+x); i++){
             for(int j = y+topH; j < (room->getHeight()+y+topH); j++){
                 if((i == x || i == (room->getWidth()+x-1)) || (j == y+topH || j == (room->getHeight()+y-1+topH))) //|| i == (room->getWidth()) && j == y || j == room->getHeight())
-                    grid->addObjectToDisplay(new GridChar(wall, NULL), i, j);
+                    grid->addObjectToDisplay(new GridChar(wall, NULL, NULL), i, j);
                 else
-                    grid->addObjectToDisplay(new GridChar(floor, NULL), i, j);   
+                    grid->addObjectToDisplay(new GridChar(floor, NULL, NULL), i, j);   
                 for (int i = 0; (isRunning && i < 5); i++) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 }
@@ -65,20 +65,20 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
                 if(y[i] < y[i+1]){
                     for(int j = y[i]; j <= y[i+1]; j++)
                     {
-                        grid->addObjectToDisplay(new GridChar('#', NULL), x[i], (j+topH));
+                        grid->addObjectToDisplay(new GridChar('#', NULL, NULL), x[i], (j+topH));
                         //rid->update();
                     }
                 }
                 else{
                     for(int j = y[i]; j >= y[i+1]; j--){  
-                        grid->addObjectToDisplay(new GridChar('#', NULL), x[i], (j+topH));
+                        grid->addObjectToDisplay(new GridChar('#', NULL, NULL), x[i], (j+topH));
                         //grid->update();
                     }
                 } 
             }
             else if(y[i] == y[i+1]){
                 for(int k = x[i]; k <= x[i+1]; k++){
-                    grid->addObjectToDisplay(new GridChar('#', NULL), k, (y[i]+topH));
+                    grid->addObjectToDisplay(new GridChar('#', NULL, NULL), k, (y[i]+topH));
                     //grid->update();
                 }
             }
@@ -100,19 +100,19 @@ static Player* addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
         Scroll *s = dynamic_cast<Scroll*>(item);
         if(s){
             c = '?';
-            grid->addObjectToDisplay(new GridChar(c, s), posX, posY+topH);
+            grid->addObjectToDisplay(new GridChar(c, NULL, s), posX, posY+topH);
             continue;
         }
         Sword *sw = dynamic_cast<Sword*>(item);
         if(sw){
             c = ')';
-            grid->addObjectToDisplay(new GridChar(c, sw), posX, posY+topH);
+            grid->addObjectToDisplay(new GridChar(c, NULL, sw), posX, posY+topH);
             continue;
         }
         Armor *a = dynamic_cast<Armor*>(item);
         if(a){
             c = ']';
-            grid->addObjectToDisplay(new GridChar(c, a), posX, posY+topH);
+            grid->addObjectToDisplay(new GridChar(c, NULL, a), posX, posY+topH);
         }
         //grid->addObjectToDisplay(new GridChar(c, NULL), posX, posY+topH);
         grid->update();
@@ -133,14 +133,14 @@ static Player* addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
                 ch = 'S';
             else if(name == "Troll")
                 ch = 'T';
-            grid->addObjectToDisplay(new GridChar(ch, m), posX, posY+topH);
+            grid->addObjectToDisplay(new GridChar(ch, m, NULL), posX, posY+topH);
             continue;
         }
         Player *p = dynamic_cast<Player*>(creature);
         player = p;
         if(p)
             ch = '@';
-        grid->addObjectToDisplay(new GridChar(ch, p), posX, posY+topH);
+        grid->addObjectToDisplay(new GridChar(ch, p, NULL), posX, posY+topH);
         grid->update();
         for(int i = 0; i < 5; i++)
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -163,6 +163,7 @@ void displayDungeon(Dungeon *dungeon){
             playerHitpoints=player->getHP();
             playerX =player->getPosX();
             playerY =(player->getPosY() + dungeon->getTopHeight());
+            std::vector <CreatureAction*> cAA = player->getCreatureActions();
         }
     }
     //std::thread displayThread(initDisplay, grid, dimensions[0], dimensions[1], playerHitpoints);

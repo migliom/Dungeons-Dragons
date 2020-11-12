@@ -4,19 +4,22 @@ Action::Action(){
 }
 void Action::setMessage(std::string _str)
 {
-    std::cout << "Action::setValue()" << std::endl;
+    //std::cout << "Action::setValue()" << std::endl;
     message = _str;
 }
-
+std::string Action::getMessage()
+{
+    return message;
+}
 void Action::setIntValue(int _varo)
 {
-    std::cout << "Action::setIntValue()" << std::endl;
+    //std::cout << "Action::setIntValue()" << std::endl;
     intValue = _varo;
 }
 
 void Action::setCharValue(char _varo)
 {
-    std::cout << "Action::setCharValue()" << std::endl;
+    //std::cout << "Action::setCharValue()" << std::endl;
     charVal = _varo;
 }
 

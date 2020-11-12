@@ -225,10 +225,12 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         bHPMoves = true;   
     } else if (case_insensitive_match(qNameStr,"actionMessage")) {
         bActionMessage = true;   
-    } else if (case_insensitive_match(qNameStr,"actionIntValue")) {
+    } else if (case_insensitive_match(qNameStr,"ActionIntValue")) {
         bActionIntValue = true;
-    }else if (case_insensitive_match(qNameStr,"actionCharValue")) {
+    }else if (case_insensitive_match(qNameStr,"ActionCharValue")) {
         bActionCharValue = true;
+    }else if (case_insensitive_match(qNameStr,"ItemIntValue")) {
+        bItemIntValue = true;
     }
     else {
         std::cout <<"Unknown qname: " << qNameStr << std::endl;
@@ -359,9 +361,18 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
                 bIntValue = false;
             }
         }
-        else{
-            //std::cout << "probably some sort of action" << "\n";
+        else if (bActionMessage){
+            actionBeingParsed->setMessage(data);
+            bActionMessage = false;
+        }else if (bActionIntValue || bItemIntValue){
+            actionBeingParsed->setIntValue(std::stoi(data));
+            bActionIntValue = false;
+            bItemIntValue = false;
+        }else if (bActionCharValue){
+            actionBeingParsed->setCharValue(std::stoi(data));
+            bActionCharValue = false;
         }
+
         //-----------------------------------------------------// 
         char *  qNameStr = xercesc::XMLString::transcode(qName);
         if (case_insensitive_match(qNameStr,"Room") || case_insensitive_match(qNameStr,"Monster") || case_insensitive_match(qNameStr,"Player") || case_insensitive_match(qNameStr,"Sword") || case_insensitive_match(qNameStr,"Armor") || case_insensitive_match(qNameStr,"Scroll")) {

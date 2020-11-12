@@ -1,9 +1,10 @@
 #include "KeyboardListener.hpp"
+#include <unistd.h>
 
 KeyboardListener::KeyboardListener(ObjectDisplayGrid* _grid) : grid(_grid) {}
-
 void KeyboardListener::run(int *xP, int *yP, Player *p) {
 	//grid->writeLine(0, "Press 'x' to exit");
+	int alive = 1;
 	running = true;
 	char input;
 	do {
@@ -16,6 +17,7 @@ void KeyboardListener::run(int *xP, int *yP, Player *p) {
 		case 'x':
 			running = false;
 			grid->writeLine(2, "Exiting...");
+			//if die -> write line
 			break;
 		case 'a':
 			grid->moveLeft(xP, yP, p);
@@ -27,7 +29,7 @@ void KeyboardListener::run(int *xP, int *yP, Player *p) {
 			grid->moveRight(xP, yP, p);
 			break;
 		case 'w':
-			grid->moveUp(xP, yP, p);
+			alive = grid->moveUp(xP, yP, p);
 			break;
 		default:
 			// C is not happy about appending a character to a string apparently
@@ -37,5 +39,9 @@ void KeyboardListener::run(int *xP, int *yP, Player *p) {
 			break;
 		}
 		grid->update();
-	} while (running && input != EOF);
+		if(!alive){
+			grid->writeLine(2, "You died......");
+			usleep(5000000);
+		}
+	} while (running && input != EOF && alive);
 }
