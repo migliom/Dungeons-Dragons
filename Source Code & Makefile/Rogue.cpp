@@ -42,7 +42,9 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
     grid->update();
 }
 static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int HP){
-    grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0");
+    grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0.. MOVE = W-A-S-D. Sorry there is a race problem with add passages thread that I cannot figure out. Still trying to get it to work 100% of time. Recompilation usually works.");
+    //grid->writeLine(1, "HP: " + std::to_string(HP));
+    //grid->writeLine(0, "Move with W-A-S-D, can change easily if needed");
     grid->update();
     return;
 }
@@ -52,30 +54,32 @@ static void addPassages(ObjectDisplayGrid *grid, Dungeon *dungeon){
     std::vector<Passage*> passages = dungeon->getPassages();
     for(Passage *passage: passages){
         std::vector<int> x = passage->getX();
+        //grid->writeLine(36, std::to_string(x.size()));
         std::vector<int> y = passage->getY();
-        for(int i = 0; i < x.size(); i++){
+        //grid->writeLine(37, std::to_string(y.size()));
+        grid->update();
+        for(int i = 0; i < x.size()-1; i++){
             if(x[i] == x[i+1]){
                 if(y[i] < y[i+1]){
                     for(int j = y[i]; j <= y[i+1]; j++)
                     {
                         grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
-                        grid->update();
+                        //rid->update();
                     }
                 }
                 else{
                     for(int j = y[i]; j >= y[i+1]; j--){  
                         grid->addObjectToDisplay(new GridChar('#'), x[i], (j+topH));
-                        grid->update();
+                        //grid->update();
                     }
                 } 
             }
-            else{
+            else if(y[i] == y[i+1]){
                 for(int k = x[i]; k <= x[i+1]; k++){
                     grid->addObjectToDisplay(new GridChar('#'), k, (y[i]+topH));
-                    grid->update();
+                    //grid->update();
                 }
             }
-            grid->update();
         }
         grid->update();
     }
@@ -86,12 +90,13 @@ static void addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
     std::vector <Creature*> creatures = dungeon->getCreatures();
     for(Item *item: items){
         int posX = item->getPosX();
+        
         int posY = item->getPosY();
         //std::cout << "PosX: " << posX << " PosY: " << posY << std::endl;
         char c = ' ';
         Scroll *s = dynamic_cast<Scroll*>(item);
         if(s)
-            c = ']';
+            c = '?';
         Sword *sw = dynamic_cast<Sword*>(item);
         if(sw)
             c = ')';
