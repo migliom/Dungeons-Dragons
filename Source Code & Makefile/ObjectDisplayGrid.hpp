@@ -8,6 +8,8 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
+#include <stdlib.h>
+#include <time.h>
 class ObjectDisplayGrid {
 private:
 	/** Keeps track of the characters on the screen */
@@ -54,5 +56,7 @@ public:
 	virtual void moveLeft(int*, int*, Player*);
 	virtual void moveDown(int*, int*, Player*);
 	virtual void moveRight(int*, int*, Player*);
+	char engageInCombat(Player*, Displayable*, int, int);
+	void figureOutItem(Player*, int, int);
 };
 

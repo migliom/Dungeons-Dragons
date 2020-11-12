@@ -14,6 +14,19 @@ class Armor;
 
 class Displayable{
     private:
+        /*bool visible = false;
+        bool invisible = false;
+        int maxHP = 0;
+        int hpMoves = 0;
+        int hitpoints = 0;
+        char type;
+        int value = 0;
+        int posX = 0;
+        int posY = 0;
+        int width = 0;
+        int height = 0;
+        int intValue = 0;*/
+    public:
         bool visible = false;
         bool invisible = false;
         int maxHP = 0;
@@ -26,7 +39,6 @@ class Displayable{
         int width = 0;
         int height = 0;
         int intValue = 0;
-    public:
         Displayable();
         void setInvisible();
         virtual void setID(int, int) {};

@@ -14,6 +14,7 @@ public:
 	//char display;
 	std::stack <char> floorStack;
 	std::stack <Displayable*> displayableStack;
+	Displayable *dis;
 	/**
 	 * Creates a new grid character
 	 * @param display Character to use for display
@@ -25,6 +26,6 @@ public:
 	 * @return  Character to display
 	 */
 	virtual char getChar();
-	virtual Displayable* getDisplpayable(){};
+	virtual Displayable* getDis();
 };
 

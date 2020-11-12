@@ -1,9 +1,43 @@
 #include <curses.h>
 #include "ObjectDisplayGrid.hpp"
+#include <unistd.h>
 #ifdef _WIN32
 	#include <windows.h>
 #endif
 
+static int damageCalc(int damage){
+    srand (time(NULL));
+    return (rand() % damage + 1);
+}
+char ObjectDisplayGrid::engageInCombat(Player *p, Displayable *dp, int xP, int yP){
+    int monsterHP = dp->hitpoints;
+    int playerHP = p->hitpoints;
+    int pmaxHit = p->maxHP;
+    int monsterMaxHit = dp->maxHP;
+	//std::cout << "The values are: " << monsterHP << playerHP << pmaxHit << monsterMaxHit << std::endl;
+    while(playerHP > 0 && monsterHP > 0){
+        int pDamage = damageCalc(pmaxHit);
+        int monsterDamage = damageCalc(monsterMaxHit);
+		playerHP -= monsterDamage;
+        monsterHP -= pDamage;
+		//std::cout << "BOOSSSMANN" <<std::endl;
+        writeLine(yP+15, "You did " + std::to_string(pDamage) + " to the monster.");
+		writeLine(yP+16, "You have " + std::to_string(playerHP) + " remaining.");
+        writeLine(yP+17, "The monster did " + std::to_string(monsterDamage) + " to you.");
+		writeLine(yP+16, "Monster has " + std::to_string(monsterHP) + " remaining.");
+        usleep(30000);
+    }
+    if(playerHP){
+        //execute monster death message
+        p->hitpoints = playerHP;
+		return 'W';
+    }
+    else{
+        //execute player death message
+        dp->hitpoints = monsterHP;
+		return 'L';
+    }
+}
 // I am not certain about the threadsafety of ncurse methods.
 // They appear to work just fine in my testing, but that is likely as it always sets the cursor position before writing
 
@@ -80,6 +114,7 @@ void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 					}
 				}
 				objectGrid[x][y]->floorStack.push((ch->getChar()));
+				objectGrid[x][y]->displayableStack.push((ch->getDis()));
 			}
 			// add new character to the internal character list
 			else
@@ -112,9 +147,38 @@ void ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 		if(character1 == 'x'){
 				return;
 		}
-		/*else if(character1 == 'T' || character1 == 'S' || character1 == 'H'){
+		else if(character1 == 'T' || character1 == 'S' || character1 == 'H'){
 			*yP -= 1;
-			//engageInCombat()
+			Displayable *monster = objectGrid[x][*yP]->getDis();
+			if(monster == NULL){
+				std::cout << "This joint is null" <<std::endl;
+			}
+			addObjectToDisplay(new GridChar('@', p), x, y-1);
+			char win_lose = engageInCombat(p, monster, *xP, *yP);
+			GridChar *checkX2 = objectGrid[x][y];
+			checkX2->floorStack.pop();
+			checkX2->displayableStack.pop();
+			mvaddch(y, x, checkX2->getChar());
+			if(win_lose == 'W'){
+				GridChar *checkX2 = objectGrid[x][*yP];
+				checkX2->floorStack.pop();
+				checkX2->displayableStack.pop();
+				checkX2->floorStack.pop();
+				checkX2->displayableStack.pop();
+				addObjectToDisplay(new GridChar('@', p), x, y-1);
+				mvaddch(y-1, x, checkX2->getChar());
+				//need to add return statement that you died and the game is over
+			}
+			/*else{
+				GridChar *checkX2 = objectGrid[x][y];
+				checkX2->floorStack.pop();
+				checkX2->displayableStack.pop();
+				mvaddch(y+1, x, checkX2->getChar());
+			}*/
+		}
+		/*else if(character1 == '?' || character1 == ')' || character1 == ']'){
+			*yP -= 1;
+			figureOutItem(this, p, xP, yP-1);
 		}*/
 		else{
 			*yP -= 1;
@@ -183,3 +247,4 @@ void ObjectDisplayGrid::moveRight(int *xP, int *yP, Player *p){
 		}
 	}
 }
+
