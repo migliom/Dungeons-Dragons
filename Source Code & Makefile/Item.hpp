@@ -4,16 +4,19 @@
 #include <vector>
 #include <iostream>
 #include "Displayable.hpp"
+#include "Action.hpp"
 
 //class Displayable;
 
 class Item : public Displayable{
     private:
+        std::vector <ItemAction*> itemActions;
         //Creature* owner;
         int room;
         int serial;
         std::string name;
     public:
+        void addItemAction(ItemAction*);
         void setOwner();
 };
 

@@ -79,7 +79,9 @@ int Displayable::getHP(){
 Creature::Creature(){
 
 }
-
+void Creature::addCreatureAction(CreatureAction *cA){
+    creatureActions.push_back(cA);
+}
 int Creature::getSerial(){
     return serial;
 }

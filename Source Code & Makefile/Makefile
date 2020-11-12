@@ -4,7 +4,7 @@ LIBS = /usr/local/Cellar/xerces-c/3.2.3/include
 INCLUDE = /usr/local/Cellar/xerces-c/3.2.3/lib
 
 CXXFLAGS=-std=c++11 -Wall -g -I /usr/local/Cellar/xerces-c/3.2.3/include -L /usr/local/Cellar/xerces-c/3.2.3/lib
-CLASSES = DungeonXMLHandler.cpp Displayable.cpp ObjectDisplayGrid.cpp Item.cpp Structure.cpp Dungeon.cpp GridChar.cpp KeyboardListener.cpp
+CLASSES = DungeonXMLHandler.cpp Displayable.cpp ObjectDisplayGrid.cpp Item.cpp Structure.cpp Dungeon.cpp GridChar.cpp KeyboardListener.cpp Action.cpp
 
 HEADERS = $(CLASSES:%.cpp=%.hpp)
 SOURCES = Rogue.cpp main.cpp $(CLASSES)

@@ -4,6 +4,9 @@ void Item::setOwner(){
     //this->creature = creature;
     std::cout << "Set owner()" << std::endl;
 }
+void Item::addItemAction(ItemAction *itemAction){
+    itemActions.push_back(itemAction);
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//
 Scroll::Scroll(std::string _name){
     //std::cout << "Scroll::Scroll()" << std::endl;

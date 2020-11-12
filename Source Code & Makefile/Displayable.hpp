@@ -59,6 +59,7 @@ class Creature : public Displayable{
     public:
         Creature();
         void setRoom(int);
+        void addCreatureAction(CreatureAction *creatureAction);
         virtual void setID(int, int) {};
         virtual void setName(std::string) {};
         void setSerial(int);

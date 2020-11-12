@@ -41,10 +41,12 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
     }
     grid->update();
 }
-static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int HP){
-    grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0.. MOVE = W-A-S-D. Sorry there is a race problem with add passages thread that I cannot figure out. Still trying to get it to work 100% of time. Recompilation usually works.");
+static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int gameHeight, int HP){
+    grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0.. MOVE = W-A-S-D.");
     //grid->writeLine(1, "HP: " + std::to_string(HP));
     //grid->writeLine(0, "Move with W-A-S-D, can change easily if needed");
+    grid->writeLine((height), "Inventory: ");
+    grid->writeLine((height+1), "Info Messages: ");
     grid->update();
     return;
 }
@@ -152,7 +154,7 @@ void displayDungeon(Dungeon *dungeon){
     }
     //std::thread displayThread(initDisplay, grid, dimensions[0], dimensions[1], playerHitpoints);
     //displayThread.join();
-    initDisplay(grid, dimensions[0], dimensions[1], playerHitpoints);
+    initDisplay(grid, dimensions[0], dimensions[1], dimensions[2], playerHitpoints);
     //std::thread displayRooms(addRooms, dungeon, grid);
     //displayRooms.join();
     addRooms(dungeon, grid);

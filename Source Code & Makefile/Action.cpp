@@ -1,4 +1,7 @@
 #include "Action.hpp"
+
+Action::Action(){
+}
 void Action::setMessage(std::string _str)
 {
     std::cout << "Action::setValue()" << std::endl;
@@ -17,10 +20,12 @@ void Action::setCharValue(char _varo)
     charVal = _varo;
 }
 
-CreatureAction::CreatureAction(){
-    std::cout << "CreatureAction()" << std::endl;
+CreatureAction::CreatureAction(std::string _name, std::string _type){
+    name = _name;
+    type = _type;
 }
 
-ItemAction::ItemAction(){
-    std::cout << "ItemAction()" << std::endl;
+ItemAction::ItemAction(std::string _name, std::string _type){
+    name = _name;
+    type = _type;
 }
