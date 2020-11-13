@@ -7,6 +7,7 @@ void KeyboardListener::run(int *xP, int *yP, Player *p) {
 	int alive = 1;
 	running = true;
 	char input;
+	char index;
 	do {
 		// wait for next input
 		// lowercase so 'x' and 'X' are treated as the same
@@ -19,17 +20,27 @@ void KeyboardListener::run(int *xP, int *yP, Player *p) {
 			grid->writeLine(2, "Exiting...");
 			//if die -> write line
 			break;
-		case 'a':
+		case 'h':
 			grid->moveLeft(xP, yP, p);
 			break;
-		case 's':
+		case 'k':
 			grid->moveDown(xP, yP, p);
 			break;
-		case 'd':
+		case 'l':
 			grid->moveRight(xP, yP, p);
 			break;
-		case 'w':
+		case 'j':
 			alive = grid->moveUp(xP, yP, p);
+			break;
+		case 'p':
+			grid->pickUpItem(p,*xP,*yP);
+			break;
+		case 'd':
+			index = std::tolower(getchar());
+			grid->dropItem(p, index, *xP, *yP);
+			break;
+		case 'i':
+			grid->updateBottomDisplay(p);
 			break;
 		default:
 			// C is not happy about appending a character to a string apparently

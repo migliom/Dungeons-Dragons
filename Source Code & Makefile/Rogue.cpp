@@ -45,8 +45,6 @@ static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int game
     grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0.. MOVE = W-A-S-D.");
     //grid->writeLine(1, "HP: " + std::to_string(HP));
     //grid->writeLine(0, "Move with W-A-S-D, can change easily if needed");
-    grid->writeLine((height), "Inventory: ");
-    grid->writeLine((height+1), "Info Messages: ");
     grid->update();
     return;
 }

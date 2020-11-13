@@ -14,28 +14,29 @@ class Item : public Displayable{
         //Creature* owner;
         int room;
         int serial;
-        std::string name;
+        //std::string name;
     public:
+        std::string name;
         void addItemAction(ItemAction*);
         void setOwner();
+        std::string getItemName(int);
 };
 
 class Scroll : public Item{
     private:
         int room;
         int serial;
-        std::string name;
     public:
         Scroll(std::string);
         void setID(int, int);
         void setName(std::string);
+        
 };
 
 class Armor : public Item{
     private:
         int room;
         int serial;
-        std::string name;
     public:
         Armor(std::string);
         void setName(std::string);
@@ -46,7 +47,6 @@ class Sword : public Item{
     private:
         int room;
         int serial;
-        std::string name;
     public:
         Sword(std::string);
         void setID(int, int);

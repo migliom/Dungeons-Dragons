@@ -87,13 +87,17 @@ class Player : public Creature{
     private:
         Sword *sword;
         Armor *armor;
+        std::vector <Item*> pack;
         std::string namePlayer;
     public:
         void setArmor(Item *sword);
+        void addToPack(Item*);
+        Item *dropFromPack(int);
         void setWeapon(Item *armor);
         void setName(std::string);
         void setID(int, int);
         Player();
+        std::vector<Item*> getPack();
 };
 
 class Monster : public Creature{

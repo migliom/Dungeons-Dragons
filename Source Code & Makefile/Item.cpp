@@ -7,6 +7,9 @@ void Item::setOwner(){
 void Item::addItemAction(ItemAction *itemAction){
     itemActions.push_back(itemAction);
 }
+std::string Item::getItemName(int){
+    return name;
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//
 Scroll::Scroll(std::string _name){
     //std::cout << "Scroll::Scroll()" << std::endl;

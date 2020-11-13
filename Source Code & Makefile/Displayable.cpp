@@ -129,6 +129,23 @@ void Player::setID(int _room, int _serial){
     Creature::setSerial(_serial);
     //std::cout << "Player: " << _room << ", Serial: " << _serial << std::endl;
 }
+void Player::addToPack(Item *item){
+    //std::string s = item->getItemName(2);
+    //std::cout << "THE ITEM IS: " << s << std::endl;
+    pack.push_back(item);
+}
+Item* Player::dropFromPack(int index){
+    if(index > pack.size() || index < 1){
+        //std::cout << "This bitch is NULL" << std::endl;
+        return NULL;
+    }
+    Item *i = pack[index];
+    pack.erase(pack.begin()+index-1);
+    return i;
+}
+std::vector<Item*> Player::getPack(){
+    return pack;
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//ss
 Monster::Monster(){
     //std::cout << "New Monster()" << std::endl;

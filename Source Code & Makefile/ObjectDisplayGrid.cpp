@@ -4,7 +4,6 @@
 #ifdef _WIN32
 	#include <windows.h>
 #endif
-
 static int damageCalc(int damage){
     srand (time(NULL));
     return (rand() % damage + 1);
@@ -113,12 +112,8 @@ void ObjectDisplayGrid::addObjectToDisplay(GridChar* ch, int x, int y) {
 						return;
 					}
 				}
-				/*if(ch->getChar() < 65 || ch->getChar() > 90){
-					objectGrid[x][y]->itemStack.push((ch->getItem())); //item
-				}*/
-				else{
-					objectGrid[x][y]->displayableStack.push((ch->getDis()));
-				}
+				objectGrid[x][y]->itemStack.push((ch->getItem())); //item
+				objectGrid[x][y]->displayableStack.push((ch->getDis()));
 				objectGrid[x][y]->floorStack.push((ch->getChar()));
 			}
 			// add new character to the internal character list
@@ -143,6 +138,21 @@ void ObjectDisplayGrid::writeLine(int line, std::string message) {
 	clrtoeol();
 }
 
+void ObjectDisplayGrid::updateBottomDisplay(Player *player){
+	std::vector<Item*> items = player->getPack();
+	std::string itemStr = "";
+	if(!items.empty()){
+		for(Item * item: items){
+			itemStr += item->getItemName(2);
+			//std::cout << "An item is here: " << itemStr<< std::endl;
+			itemStr += ", ";
+		}
+	}
+	//std::cout << "The line be: " << itemStr << std::endl;
+	writeLine(27, "Inventory: " + itemStr);
+	update();
+}
+//-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 int ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 	int x = *xP;
 	int y = *yP;
@@ -155,9 +165,6 @@ int ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 		else if(character1 == 'T' || character1 == 'S' || character1 == 'H'){
 			*yP -= 1;
 			Creature *monster = objectGrid[x][*yP]->getDis();
-			if(monster == NULL){
-				std::cout << "This joint is null" <<std::endl;
-			}
 			addObjectToDisplay(new GridChar('@', p, NULL), x, y-1);
 			char win_lose = engageInCombat(p, monster, *xP, *yP);
 			GridChar *checkX2 = objectGrid[x][y];
@@ -177,11 +184,6 @@ int ObjectDisplayGrid::moveUp(int *xP, int *yP, Player *p){
 			else{
 				return 0;
 			}
-		}
-		else if(character1 == '?' || character1 == ')' || character1 == ']'){
-			*yP -= 1;
-			Displayable *item = objectGrid[x][*yP]->getDis();
-			//figureOutItem(p, *xP, y-1);
 		}
 		else{
 			*yP -= 1;
@@ -251,4 +253,59 @@ void ObjectDisplayGrid::moveRight(int *xP, int *yP, Player *p){
 		}
 	}
 }
+//-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+void ObjectDisplayGrid::pickUpItem(Player* player, int x, int y){
+	char waste = objectGrid[x][y]->getChar(); //will be @
+	objectGrid[x][y]->floorStack.pop(); 
+	char character1 = objectGrid[x][y]->getChar(); //should be item if there is one
+	updateBottomDisplay(player);
+	if(character1 == '?' || character1 == ')' || character1 == ']'){
+		Item *itemWaste = objectGrid[x][y]->getItem(); //NULL with @ on top
+		objectGrid[x][y]->floorStack.pop(); 
+		objectGrid[x][y]->itemStack.pop(); //get rid of @ item
+		Item *item = objectGrid[x][y]->getItem();
+		player->addToPack(item);
+		objectGrid[x][y]->itemStack.push(itemWaste); //add NULL back to stack
+	}
+	for(int i = 0; i < 5; i++)
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	updateBottomDisplay(player);
+	objectGrid[x][y]->floorStack.push(waste);
+	return;
+}
 
+void ObjectDisplayGrid::dropItem(Player *player, int index, int x, int y){
+	Item *item = player->dropFromPack(index);
+	if(item == NULL){
+		//please pick item within pack
+		//std::cout << "This bitch is NULL" << std::endl;
+		return;
+	}
+	objectGrid[x][y]->itemStack.pop();
+	objectGrid[x][y]->floorStack.pop();
+	char c;
+	Scroll *s = dynamic_cast<Scroll*>(item);
+	if(s){
+		c = '?';
+		objectGrid[x][y]->itemStack.push(s);
+		objectGrid[x][y]->floorStack.push(c);
+		//grid->addObjectToDisplay(new GridChar(c, NULL, s), posX, posY+topH);
+	}
+	Armor *a = dynamic_cast<Armor*>(item);
+	if(a){
+		c = ']';
+		objectGrid[x][y]->itemStack.push(a);
+		objectGrid[x][y]->floorStack.push(c);
+		//grid->addObjectToDisplay(new GridChar(c, NULL, s), posX, posY+topH);
+	}
+	Sword *sw = dynamic_cast<Sword*>(item);
+	if(sw){
+		c = ')';
+		objectGrid[x][y]->itemStack.push(sw);
+		objectGrid[x][y]->floorStack.push(c);
+		//grid->addObjectToDisplay(new GridChar(c, NULL, s), posX, posY+topH);
+	}
+	std::cout << "WE HERE NIGGA" << std::endl;
+	objectGrid[x][y]->itemStack.push(NULL);
+	objectGrid[x][y]->floorStack.push('@');
+}
