@@ -9,7 +9,7 @@
             <height>5</height>
             <Scroll name="Scroll" room="1" serial="1">
                 <visible>1</visible>
-                <posX>3</posX>
+                <posX>2</posX>
                 <posY>3</posY>
                 <ItemAction name="BlessArmor" type="item">
                     <actionMessage>You have picked up a scroll of weakened armor</actionMessage>
@@ -36,6 +36,12 @@
                     <posY>2</posY>                                                                                                          
                     <ItemIntValue>10</ItemIntValue>                                                                                     
                 </Sword>  
+                <Armor name="+10 Armor" room="1" serial="3">                                                                                 
+                    <visible>1</visible>                                                                                                    
+                    <posX>4</posX>                                                                                                          
+                    <posY>2</posY>                                                                                                          
+                    <ItemIntValue>5</ItemIntValue>                                                                                     
+                </Sword>
             </Player>
         </Room>
     </Rooms>

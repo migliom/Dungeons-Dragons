@@ -1,7 +1,8 @@
 #pragma once
 #include <stack>
-#include "Displayable.hpp"
+//#include "Displayable.hpp"
 #include "Item.hpp"
+#include "Structure.hpp"
 /**
  * This class in its current form is simply a wrapper around a character.
  * However, it can easily be expanded to include other behaviors for a grid character.
@@ -30,5 +31,6 @@ public:
 	virtual char getChar();
 	virtual Creature* getDis();
 	virtual Item* getItem();
+	virtual void popStacks();
 };
 

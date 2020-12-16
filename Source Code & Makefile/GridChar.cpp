@@ -21,3 +21,12 @@ Item* GridChar::getItem(){
 void GridChar::setChar(char x){
 	//display = x;
 }
+
+void GridChar::popStacks(){
+	if(!(floorStack.empty()))
+		floorStack.pop();
+	if(!(displayableStack.empty()))
+		displayableStack.pop();
+	if(!(itemStack.empty()))
+		itemStack.pop();
+}

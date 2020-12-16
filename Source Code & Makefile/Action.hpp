@@ -13,7 +13,7 @@ class Action{
         Action();
         virtual ~Action(){};
         void setMessage(std::string);
-        void setIntValue(int);
+        void setIntValueAction(int);
         void setCharValue(char);
         std::string getMessage();
         int getIntValue();

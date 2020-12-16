@@ -12,7 +12,7 @@
                 <posX>2</posX>
                 <posY>2</posY>
                 <type>T</type>
-                <hp>7</hp>
+                <hp>14</hp>
                 <maxhit>5</maxhit>
                 <CreatureAction name="Remove" type ="death">
                 </CreatureAction>
@@ -50,7 +50,7 @@
                 <posX>4</posX>
                 <posY>1</posY>
                 <type>T</type>
-                <hp>7</hp>
+                <hp>21</hp>
                 <maxhit>5</maxhit>
                 <CreatureAction name="Remove" type="death">
                 </CreatureAction>
@@ -164,7 +164,7 @@
         </Passage>
         <Passage room1="3" room2="4">
             <visible>1</visible>
-            <posX>25</posX>
+            <posX>26</posX>
             <posY>16</posY>
             <posX>29</posX>
             <posY>16</posY>

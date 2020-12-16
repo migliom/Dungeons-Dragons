@@ -14,8 +14,8 @@
                <maxhit>10</maxhit>
            </Monster>
            <Monster name="Snake" room="1" serial="3">
-               <posX>6</posX>
-               <posY>7</posY>
+               <posX>5</posX>
+               <posY>5</posY>
                <type>S</type>
                <hp>2</hp>
                <maxhit>1</maxhit>

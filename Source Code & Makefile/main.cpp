@@ -44,23 +44,21 @@ int main(int argc, char* argv[]) {
         xercesc::XMLString::release(&fileNameXMLEnc);
         Dungeon *dungeon = handler->getDungeon();
 
-        //std::vector<CreatureAction*> creatures = dungeon->getCreatures();
-        /*std::cout << "Size of creatures: " << creatures.size() << std::endl;
-        for(Creature *creature: creatures){
-            int x = creature->getPosX();
-            int y = creature->getPosX();
-            std::cout <<  "X: "  << x << " Y: " << y << std::endl;
+        /*std::vector<Creature*> creatures = dungeon->getCreatures();
+        for(Creature *creature : creatures){
+            int index = 0;
+            for(CreatureAction* cA: creature->hitActions){
+                 std::cout << "Hit action #" << index << std::endl;
+            }
+            index = 0;
+            for(CreatureAction* cA: creature->deathActions){
+                 std::cout << "Death action #" << index << std::endl;
+            }
         }*/
-    
         displayDungeon(dungeon);
 		delete parser;
 		delete handler;
-        /*
-         * the above is a different form of 
-         for (int i = 0; i < students.length; i++) {
-            std::cout << students[i] << std::endl;
-        }
-        */
+
     } catch (const xercesc::XMLException& toCatch) {
             char* message = xercesc::XMLString::transcode(toCatch.getMessage());
             std::cout << "Exception message is: \n"

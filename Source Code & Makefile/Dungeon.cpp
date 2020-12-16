@@ -15,18 +15,15 @@ void Dungeon::getDungeon(std::string name, int width, int gameHeight){
 }
 void Dungeon::addRoom(Room *room){
     rooms.push_back(room);
-    std::cout<<"adding room to dungeon"<<std::endl;
 }
 void Dungeon::addCreature(Creature *creature){
     creatures.push_back(creature);
-    std::cout<<"adding creature to dungeon"<<std::endl;
 }
 void Dungeon::addPassage(Passage *passage){
     passages.push_back(passage);
 }
 void Dungeon::addItem(Item *item){
     items.push_back(item);
-    std::cout<<"adding item to dungeon"<<std::endl;
 }
 std::string Dungeon::toString(){
     return "";
@@ -57,4 +54,7 @@ std::vector<int> Dungeon::returnDimensions(){
 }
 int Dungeon::getTopHeight(){
     return topHeight;
+}
+int Dungeon::getGameHeight(){
+    return gameHeight;
 }

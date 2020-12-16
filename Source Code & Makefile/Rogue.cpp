@@ -4,7 +4,6 @@
 #include "Displayable.hpp"
 #include "Item.hpp"
 #include "Structure.hpp"
-#include "ObjectDisplayGrid.hpp"
 #include "KeyboardListener.hpp"
 #include <sstream>
 #include <iostream>
@@ -41,10 +40,13 @@ static void addRooms(Dungeon* dungeon, ObjectDisplayGrid* grid){
     }
     grid->update();
 }
-static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int gameHeight, int HP){
-    grid->writeLine(0, "HP: " + std::to_string(HP) + " Core: 0.. MOVE = W-A-S-D.");
-    //grid->writeLine(1, "HP: " + std::to_string(HP));
-    //grid->writeLine(0, "Move with W-A-S-D, can change easily if needed");
+static void initDisplay(ObjectDisplayGrid* grid, int width, int height, int gameHeight, int HP, int tH, int gH){
+    grid->writeLine(0, std::to_string(HP));
+
+    grid->writeLine(2, "");
+
+    grid->writeLine(tH+gH, "");
+    grid->writeLine(tH+gH+1, "");
     grid->update();
     return;
 }
@@ -112,7 +114,6 @@ static Player* addCreaturesandItems(ObjectDisplayGrid *grid, Dungeon *dungeon){
             c = ']';
             grid->addObjectToDisplay(new GridChar(c, NULL, a), posX, posY+topH);
         }
-        //grid->addObjectToDisplay(new GridChar(c, NULL), posX, posY+topH);
         grid->update();
         for(int i = 0; i < 5; i++)
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
@@ -151,22 +152,23 @@ void displayDungeon(Dungeon *dungeon){
     std::vector<Passage*> passages = dungeon->getPassages();
     std::vector<Creature*> creatures = dungeon->getCreatures();
     std::vector<Item*> items = dungeon->getItems();
-
-    ObjectDisplayGrid pgrid(dimensions[0], dimensions[1], 2);
+    int gameHeight = dungeon->getGameHeight();
+    int topHeight = dungeon->getTopHeight();
+    ObjectDisplayGrid pgrid(dimensions[0], dimensions[1], 2, gameHeight, topHeight);
     ObjectDisplayGrid *grid = &pgrid;
     int playerHitpoints = 0;
+    int i = 1;
     for(Creature* creature: creatures){ 
         Player *player = dynamic_cast<Player*>(creature);
         if(player){
             playerHitpoints=player->getHP();
             playerX =player->getPosX();
             playerY =(player->getPosY() + dungeon->getTopHeight());
-            std::vector <CreatureAction*> cAA = player->getCreatureActions();
         }
     }
     //std::thread displayThread(initDisplay, grid, dimensions[0], dimensions[1], playerHitpoints);
     //displayThread.join();
-    initDisplay(grid, dimensions[0], dimensions[1], dimensions[2], playerHitpoints);
+    initDisplay(grid, dimensions[0], dimensions[1], dimensions[2], playerHitpoints, topHeight, gameHeight);
     //std::thread displayRooms(addRooms, dungeon, grid);
     //displayRooms.join();
     addRooms(dungeon, grid);
@@ -177,5 +179,8 @@ void displayDungeon(Dungeon *dungeon){
     KeyboardListener listener(grid);
     //std::thread keyboardThread(&KeyboardListener::run, &listener, &playerX, &playerY);
     //keyboardThread.join();
-    listener.run(&playerX, &playerY, p);
+    listener.run(&playerX, &playerY, p, topHeight, gameHeight, rooms);
+}
+void hallucinate(){
+    std::cout << "We paid" << std::endl;
 }

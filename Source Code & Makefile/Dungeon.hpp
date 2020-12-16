@@ -1,12 +1,6 @@
 #ifndef DUNGEON_H_
 #define DUNGEON_H_
-
-//#include "Dungeon.hpp"
-#include "Displayable.hpp"
 #include "Item.hpp"
-#include "ObjectDisplayGrid.hpp"
-#include "DungeonXMLHandler.hpp"
-//#include "Structure.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -27,6 +21,7 @@ class Dungeon{
     public:
         Dungeon(std::string _name, int _width, int _topHeight, int _gameHeight, int _bottomHeight);
         Dungeon(); 
+        virtual ~Dungeon() {};
         void getDungeon(std::string name, int width, int gameHeight);
         void addCreature(Creature *creature);
         void addItem(Item *item);
@@ -41,6 +36,7 @@ class Dungeon{
         std::vector<int> returnDimensions();
         void freeRooms();
         int getTopHeight();
+        int getGameHeight();
 };
 
 

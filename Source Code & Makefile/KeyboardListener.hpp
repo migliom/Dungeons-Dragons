@@ -1,6 +1,5 @@
 #pragma once
 #include "ObjectDisplayGrid.hpp"
-
 class KeyboardListener {
 private:
     /** Object display grid reference to write errors */
@@ -19,6 +18,6 @@ public:
     /**
      * Runs the keyboard listener in a thread
      */
-    void run(int*, int*, Player*);
+    void run(int*, int*, Player*, int, int, std::vector<Room*>);
 };
 

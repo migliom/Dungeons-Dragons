@@ -5,12 +5,12 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-//#include "Item.hpp"
 #include "Action.hpp"
 
 class Item;
 class Sword;
 class Armor;
+class Scroll;
 
 class Displayable{
     private:
@@ -61,43 +61,50 @@ class Displayable{
         virtual void addX(int) {};
         virtual void addY(int) {};
         virtual int getSerial() {};
+        virtual void setDeathAction(CreatureAction*) {};
+        virtual void setHitAction(CreatureAction*) {};
+        virtual void addItemAction(ItemAction*) {};
 };
 
 class Creature : public Displayable{
     private:
-        std::vector <CreatureAction*> creatureActions;
         int serial;
         int room;
     public:
         Creature();
         void setRoom(int);
-        void addCreatureAction(CreatureAction *creatureAction);
         virtual void setID(int, int) {};
         virtual void setName(std::string) {};
         void setSerial(int);
         int getSerial();
         void setHP(int);
         void setHpMoves(int);
-        void setDeathAction(CreatureAction);
-        void setHitAction(CreatureAction);
-        std::vector <CreatureAction*> getCreatureActions();
+        void setDeathAction(CreatureAction*);
+        void setHitAction(CreatureAction*);
+        std::vector <CreatureAction*> deathActions;
+        std::vector <CreatureAction*> hitActions;
+        std::vector <CreatureAction*> returnHitActions();
+        std::vector <CreatureAction*> returnDeathActions();
 };
 
 class Player : public Creature{
     private:
-        Sword *sword;
-        Armor *armor;
+        Sword *sword = NULL;
+        Armor *armor = NULL;
         std::vector <Item*> pack;
         std::string namePlayer;
     public:
-        void setArmor(Item *sword);
+        void setArmor(Armor*);
+        void setSword(Sword*);
         void addToPack(Item*);
         Item *dropFromPack(int);
-        void setWeapon(Item *armor);
         void setName(std::string);
         void setID(int, int);
         Player();
         std::vector<Item*> getPack();
+        Sword* getSword();
+        Armor* getArmor();
+        Item* scrollFromPack(int);
 };
 
 class Monster : public Creature{

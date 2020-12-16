@@ -11,15 +11,15 @@
 class Item : public Displayable{
     private:
         std::vector <ItemAction*> itemActions;
-        //Creature* owner;
         int room;
         int serial;
-        //std::string name;
     public:
+        std::vector<ItemAction*> getItemActions();
         std::string name;
-        void addItemAction(ItemAction*);
-        void setOwner();
-        std::string getItemName(int);
+        virtual void addItemAction(ItemAction*);
+        virtual void setOwner();
+        virtual std::string getItemName(int);
+        virtual void test() {};
 };
 
 class Scroll : public Item{
@@ -28,8 +28,9 @@ class Scroll : public Item{
         int serial;
     public:
         Scroll(std::string);
-        void setID(int, int);
-        void setName(std::string);
+        virtual void test() {};
+        virtual void setID(int, int);
+        virtual void setName(std::string);
         
 };
 

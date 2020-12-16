@@ -8,7 +8,7 @@ void Room::setID(int id, int random){
     //std::cout << "setID()" << std::endl;
     ID = id;
 }
-
+/*
 void Room::setCreature(Creature *_creature){
     ++numCreatures;
     creatures.push_back(_creature);
@@ -18,7 +18,7 @@ void Room::setItem(Item *_item){
     ++numItems;
     items.push_back(_item);
 }
-
+*/
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//
 Passage::Passage(){
 

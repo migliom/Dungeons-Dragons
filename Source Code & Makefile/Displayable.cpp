@@ -79,14 +79,7 @@ int Displayable::getHP(){
 Creature::Creature(){
 
 }
-void Creature::addCreatureAction(CreatureAction *cA){
-    creatureActions.push_back(cA);
-}
-std::vector <CreatureAction*> Creature::getCreatureActions(){
-    int size = creatureActions.size();
-    std::cout << "Please print the size: " << size << std::endl;
-    return creatureActions;
-}
+
 int Creature::getSerial(){
     return serial;
 }
@@ -98,11 +91,13 @@ void Creature::setHpMoves(int _hpm){
     //std::cout << "setHPMoves()" << std::endl;
     Displayable::setHpMove(_hpm);
 }
-void Creature::setDeathAction(CreatureAction){
-
+void Creature::setDeathAction(CreatureAction* action){
+    deathActions.push_back(action);
+    return;
 }
-void Creature::setHitAction(CreatureAction){
-
+void Creature::setHitAction(CreatureAction* action){
+    hitActions.push_back(action);
+    return;
 }
 void Creature::setRoom(int _room){
     room = _room;
@@ -110,15 +105,27 @@ void Creature::setRoom(int _room){
 void Creature::setSerial(int _serial){
     serial = _serial;
 }
+std::vector <CreatureAction*> Creature::returnHitActions(){
+    return hitActions;
+}
+std::vector <CreatureAction*> Creature::returnDeathActions(){
+    return deathActions;
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//
 Player::Player(){
     //std::cout << "new player: " << std::endl;
 }
-void Player::setArmor(Item *_sword){
-    sword = (Sword *) _sword;
+void Player::setArmor(Armor *_armor){
+    armor = _armor;;
 }
-void Player::setWeapon(Item *_armor){
-    armor = (Armor *)_armor;
+void Player::setSword(Sword *_sword){
+    sword = _sword;
+}
+Armor* Player::getArmor(){
+    return armor;
+}
+Sword* Player::getSword(){
+    return sword;
 }
 void Player::setName(std::string s){
     namePlayer = "Player";
@@ -135,16 +142,37 @@ void Player::addToPack(Item *item){
     pack.push_back(item);
 }
 Item* Player::dropFromPack(int index){
-    if(index > pack.size() || index < 1){
-        //std::cout << "This bitch is NULL" << std::endl;
+    index = index - '0';
+    //std::cout << "pack size: " << pack.size() << "Index: " << index << std::endl;
+    //std::cout << "pack name: " << pack[index-1]->getItemName() << std::endl;
+    if(index == 0 && pack.size() == 1){
+        Item *j = pack[index];
+        pack.erase(pack.begin()+0);
+        return j;
+    }
+    if(index >= pack.size()+1){
         return NULL;
     }
-    Item *i = pack[index];
+    if(index <= 1 && pack.size() == 0){
+        return NULL;
+    }
+    Item *i = pack[index-1];
     pack.erase(pack.begin()+index-1);
     return i;
 }
 std::vector<Item*> Player::getPack(){
     return pack;
+}
+Item* Player::scrollFromPack(int index){
+    index = index - '0';
+    if(index >= pack.size()+1){
+        return NULL;
+    }
+    if(index <= 1 && pack.size() == 0){
+        return NULL;
+    }
+    Item *i = pack[index-1];
+    return i;
 }
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//ss
 Monster::Monster(){

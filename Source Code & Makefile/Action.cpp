@@ -11,7 +11,11 @@ std::string Action::getMessage()
 {
     return message;
 }
-void Action::setIntValue(int _varo)
+std::string Action::getName()
+{
+    return name;
+}
+void Action::setIntValueAction(int _varo)
 {
     //std::cout << "Action::setIntValue()" << std::endl;
     intValue = _varo;
@@ -31,4 +35,8 @@ CreatureAction::CreatureAction(std::string _name, std::string _type){
 ItemAction::ItemAction(std::string _name, std::string _type){
     name = _name;
     type = _type;
+}
+
+int Action::getIntValue(){
+    return intValue;
 }

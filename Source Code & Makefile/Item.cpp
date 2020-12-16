@@ -10,6 +10,9 @@ void Item::addItemAction(ItemAction *itemAction){
 std::string Item::getItemName(int){
     return name;
 }
+std::vector<ItemAction*> Item::getItemActions(){
+    return itemActions;
+}
 //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_//
 Scroll::Scroll(std::string _name){
     //std::cout << "Scroll::Scroll()" << std::endl;

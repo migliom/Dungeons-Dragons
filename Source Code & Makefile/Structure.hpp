@@ -1,12 +1,7 @@
 #ifndef STRUCTURE_H_
 #define STRUCTURE_H_
 
-//#include "Dungeon.hpp"
 #include "Displayable.hpp"
-//#include "Structure.hpp"
-#include "Item.hpp"
-#include "ObjectDisplayGrid.hpp"
-#include "DungeonXMLHandler.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -24,17 +19,11 @@ class Room : public Structure{
         std::string name;
         int numCreatures = 0;
         int numItems = 0;
-        std::vector<Creature*> creatures;
-        std::vector<Item*> items;
         int ID;
     public:
         Room(std::string _name);
         void setID(int id, int);
         void setName(std::string) {};
-        void setCreature(Creature*);
-        void setItem(Item*);
-        Creature* getCreature();
-        Item* getItem();
 };
 
 class Passage : public Structure{

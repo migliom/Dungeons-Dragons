@@ -16,7 +16,7 @@
                 <maxhit>6</maxhit>
                 <Armor name="+10 Armor" room="1" serial="2">
                     <visible>1</visible>
-                    <ItemIntValue>2</ItemIntValue>
+                    <ItemIntValue>10</ItemIntValue>
                 </Armor>
                 <CreatureAction name="ChangeDisplayedType" type="death">
                     <actionCharValue>?</actionCharValue>

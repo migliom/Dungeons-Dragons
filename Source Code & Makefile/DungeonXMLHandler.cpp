@@ -1,7 +1,10 @@
 #include "DungeonXMLHandler.hpp"
 int currRoomX = 0;
 int currRoomY = 0;
-bool actionBool = 0;
+bool bCreatureAction = 0;
+bool bDeathAction = 0;
+bool bHitAction = 0;
+bool bItemAction = 0;
 int case_insensitive_match(std::string s1, std::string s2) {
     //convert s1 and s2 into lower case strings
     std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower); //std overloads tolower, ::tolower is the definition in the global namespace
@@ -184,7 +187,7 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         bMonster = false;
         bScroll = false;
         bSword = false;
-        Displayable * item3 = new Scroll(armorName); 
+        Displayable * item3 = new Armor(armorName); 
         item3->setID(armorRoomI, armorSerialI);
         //item1->setCreature(((Scroll *) item1)); 
         dungeonBeingParsed->addItem(dynamic_cast<Item*>(item3));
@@ -194,15 +197,24 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         std::string type = xmlChToString(getXMLChAttributeFromString(attributes,"type"));
         Action *action = new CreatureAction(name, type);
         actionBeingParsed = action; 
-        actionBool = 1;
+        if(!(type.compare("death"))) {
+            bDeathAction = 1;
+            bHitAction = 0;
+        }
+        else {
+            bHitAction = 1;
+            bDeathAction = 0;
+        }
+        bCreatureAction = 1;
+        bItemAction = 0;
 
     }else if (case_insensitive_match(qNameStr,"ItemAction")) {
         std::string name = xmlChToString(getXMLChAttributeFromString(attributes,"name"));
         std::string type = xmlChToString(getXMLChAttributeFromString(attributes,"type"));
         Action *action1 = new ItemAction(name, type);
         actionBeingParsed = action1; 
-        actionBool = 1;
-
+        bItemAction = 1;
+        bCreatureAction = 0;
     }
         
     else if (case_insensitive_match(qNameStr,"visible")) {
@@ -229,8 +241,6 @@ void DungeonXMLHandler::startElement(const XMLCh* uri, const XMLCh* localName, c
         bActionIntValue = true;
     }else if (case_insensitive_match(qNameStr,"ActionCharValue")) {
         bActionCharValue = true;
-    }else if (case_insensitive_match(qNameStr,"ItemIntValue")) {
-        bItemIntValue = true;
     }
     else {
         std::cout <<"Unknown qname: " << qNameStr << std::endl;
@@ -307,7 +317,8 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
             }
         //-----------------------------------------------------// 
         } else if (bPlayer) {
-            Player *player = (Player *) displayableBeingParsed;
+            //Player *player = (Player *) displayableBeingParsed;
+            Player *player = dynamic_cast<Player*>(displayableBeingParsed);
             if(bHP){
                 player->setHP((std::stoi(data)));
                 bHP = false;
@@ -316,11 +327,11 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
                 player->setMaxHit((std::stoi(data)));
                 bMaxHit = false;
             }
-            if(bHPMoves){
+            else if(bHPMoves){
                 player->setHpMove((std::stoi(data)));
                 bHPMoves = false;
             }
-        }
+        }  
         //-----------------------------------------------------// 
         else if (bMonster) {
             Monster *monster = (Monster *) displayableBeingParsed;
@@ -361,33 +372,31 @@ void DungeonXMLHandler::endElement(const XMLCh* uri, const XMLCh* localName, con
                 bIntValue = false;
             }
         }
-        else if (bActionMessage){
+        if(bActionMessage){
             actionBeingParsed->setMessage(data);
-            bActionMessage = false;
-        }else if (bActionIntValue || bItemIntValue){
-            actionBeingParsed->setIntValue(std::stoi(data));
-            bActionIntValue = false;
-            bItemIntValue = false;
-        }else if (bActionCharValue){
-            actionBeingParsed->setCharValue(std::stoi(data));
-            bActionCharValue = false;
+            bActionMessage = 0;
         }
-
+        if(bActionIntValue){
+            actionBeingParsed->setIntValueAction((std::stoi(data)));
+            bActionIntValue = 0;
+        }
+        if(bActionCharValue){
+            actionBeingParsed->setCharValue(((char)data[0]));
+            bActionCharValue = 0;
+        }
         //-----------------------------------------------------// 
         char *  qNameStr = xercesc::XMLString::transcode(qName);
         if (case_insensitive_match(qNameStr,"Room") || case_insensitive_match(qNameStr,"Monster") || case_insensitive_match(qNameStr,"Player") || case_insensitive_match(qNameStr,"Sword") || case_insensitive_match(qNameStr,"Armor") || case_insensitive_match(qNameStr,"Scroll")) {
             displayableBeingParsed = nullptr;
         } else if (case_insensitive_match(qNameStr,"CreatureAction") || case_insensitive_match(qNameStr,"ItemAction")) {
-            //ADD CREATURE ACTION TO THE CORRESPONDING CREATURE
-            Item *item = dynamic_cast<Item*>(displayableBeingParsed);
-            if(item){
-                ItemAction *iA = dynamic_cast<ItemAction*>(actionBeingParsed);
-                item->addItemAction(iA);
+            if(bPlayer || bMonster){
+                CreatureAction *cAA = dynamic_cast<CreatureAction*>(actionBeingParsed);
+                if(bDeathAction) {displayableBeingParsed->setDeathAction(cAA);}
+                if(bHitAction) {displayableBeingParsed->setHitAction(cAA);}
             }
-            else{
-                Creature *crature = dynamic_cast<Creature*>(displayableBeingParsed);
-                CreatureAction *cA = dynamic_cast<CreatureAction*>(actionBeingParsed);
-                crature->addCreatureAction(cA);
+            else if(bSword || bArmor || bScroll){
+                ItemAction *iAA = dynamic_cast<ItemAction*>(actionBeingParsed);
+                displayableBeingParsed->addItemAction(iAA);
             }
             actionBeingParsed = nullptr;
         }
